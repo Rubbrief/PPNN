@@ -1,0 +1,310 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.app{padding:1rem 0}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:12px}
+.title{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.tabs{display:flex;gap:8px}
+.tab{padding:6px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;font-size:14px;transition:all 0.15s}
+.tab.active{background:#534AB7;color:#fff;border-color:#534AB7}
+.cal-header{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
+.cal-nav{background:none;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--color-text-secondary)}
+.cal-nav:hover{background:var(--color-background-secondary)}
+.month-label{font-size:16px;font-weight:500;color:var(--color-text-primary)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:1.5rem}
+.cal-day-name{text-align:center;font-size:11px;color:var(--color-text-tertiary);padding:4px 0}
+.cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);cursor:pointer;font-size:13px;color:var(--color-text-secondary);position:relative;transition:all 0.15s;background:var(--color-background-primary)}
+.cal-day:hover{border-color:var(--color-border-primary);color:var(--color-text-primary)}
+.cal-day.selected{border-color:#534AB7;border-width:2px;color:#534AB7;font-weight:500}
+.cal-day.today{background:var(--color-background-secondary)}
+.cal-day.empty{border:none;cursor:default}
+.cal-day .dot-row{display:flex;gap:2px;margin-top:2px}
+.dot{width:4px;height:4px;border-radius:50%}
+.dot-p{background:#534AB7}
+.dot-n{background:#D4537E}
+.section-label{font-size:12px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;margin-top:1.5rem}
+.section-label:first-child{margin-top:0}
+.compare-panel{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.person-panel{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem}
+.person-name{font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500}
+.av-p{background:#EEEDFE;color:#3C3489}
+.av-n{background:#FBEAF0;color:#72243E}
+.score-bar-wrap{margin:8px 0 12px;height:8px;background:var(--color-background-secondary);border-radius:4px;overflow:hidden}
+.score-bar{height:100%;border-radius:4px;transition:width 0.4s}
+.bar-p{background:#534AB7}
+.bar-n{background:#D4537E}
+.score-text{font-size:12px;color:var(--color-text-secondary);margin-bottom:12px}
+.habits-list{display:flex;flex-direction:column;gap:6px}
+.habit-item{display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:6px 8px;border-radius:var(--border-radius-md);transition:background 0.1s;border:0.5px solid transparent}
+.habit-item:hover{background:var(--color-background-secondary)}
+.checkbox{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--color-border-secondary);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.checkbox.checked-p{background:#534AB7;border-color:#534AB7}
+.checkbox.checked-n{background:#D4537E;border-color:#D4537E}
+.checkbox i{font-size:12px;color:#fff}
+.habit-text{font-size:13px;color:var(--color-text-primary);line-height:1.4}
+.cat-tag{font-size:10px;padding:2px 6px;border-radius:10px;font-weight:500;flex-shrink:0;margin-top:2px}
+.tag-food{background:#E1F5EE;color:#0F6E56}
+.tag-sleep{background:#EEEDFE;color:#3C3489}
+.tag-move{background:#EAF3DE;color:#27500A}
+.tag-mind{background:#FAEEDA;color:#633806}
+.tag-social{background:#FBEAF0;color:#72243E}
+.single-panel{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem}
+.person-switcher{display:flex;gap:8px;margin-bottom:1rem}
+.p-btn{padding:5px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;font-size:13px}
+.p-btn.active-p{background:#534AB7;color:#fff;border-color:#534AB7}
+.p-btn.active-n{background:#D4537E;color:#fff;border-color:#D4537E}
+.date-display{font-size:13px;color:var(--color-text-secondary);margin-bottom:1rem}
+.cat-section{margin-bottom:1rem}
+.cat-title{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
+.stat-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
+.stat-val{font-size:20px;font-weight:500;color:var(--color-text-primary)}
+.stat-label{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+</style>
+
+<h2 class="sr-only">บันทึกนิสัยประจำวันของปังปอนด์และนานา</h2>
+<div class="app">
+  <div class="header">
+    <div class="title"><i class="ti ti-calendar-check" aria-hidden="true" style="margin-right:8px;color:#534AB7"></i>Daily Habits</div>
+    <div class="tabs">
+      <button class="tab active" onclick="setView('single')" id="tab-single">บันทึก</button>
+      <button class="tab" onclick="setView('compare')" id="tab-compare">เปรียบเทียบ</button>
+    </div>
+  </div>
+
+  <div class="cal-header">
+    <button class="cal-nav" onclick="changeMonth(-1)" aria-label="เดือนก่อน"><i class="ti ti-chevron-left"></i></button>
+    <span class="month-label" id="month-label"></span>
+    <button class="cal-nav" onclick="changeMonth(1)" aria-label="เดือนถัดไป"><i class="ti ti-chevron-right"></i></button>
+  </div>
+
+  <div class="cal-grid" id="cal-grid"></div>
+
+  <div id="view-single">
+    <div class="person-switcher">
+      <button class="p-btn active-p" onclick="setPerson('p')" id="btn-p">
+        <span class="av-p" style="display:inline-block;border-radius:50%;width:16px;height:16px;text-align:center;line-height:16px;font-size:9px;font-weight:500;margin-right:4px">ป</span>ปังปอนด์
+      </button>
+      <button class="p-btn" onclick="setPerson('n')" id="btn-n">
+        <span class="av-n" style="display:inline-block;border-radius:50%;width:16px;height:16px;text-align:center;line-height:16px;font-size:9px;font-weight:500;margin-right:4px">น</span>นานา
+      </button>
+    </div>
+    <div class="date-display" id="date-display"></div>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-val" id="stat-done">0</div>
+        <div class="stat-label">ทำได้วันนี้</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="stat-pct">0%</div>
+        <div class="stat-label">ความสำเร็จ</div>
+      </div>
+    </div>
+    <div id="habits-by-cat"></div>
+  </div>
+
+  <div id="view-compare" style="display:none">
+    <div class="date-display" id="date-display-cmp"></div>
+    <div class="compare-panel">
+      <div class="person-panel">
+        <div class="person-name"><div class="avatar av-p">ป</div>ปังปอนด์</div>
+        <div class="score-text" id="score-p-text">0 / 30</div>
+        <div class="score-bar-wrap"><div class="score-bar bar-p" id="score-bar-p" style="width:0%"></div></div>
+        <div class="habits-list" id="cmp-list-p"></div>
+      </div>
+      <div class="person-panel">
+        <div class="person-name"><div class="avatar av-n">น</div>นานา</div>
+        <div class="score-text" id="score-n-text">0 / 30</div>
+        <div class="score-bar-wrap"><div class="score-bar bar-n" id="score-bar-n" style="width:0%"></div></div>
+        <div class="habits-list" id="cmp-list-n"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const HABITS = [
+  {id:0,text:'ดื่มน้ำเปล่าให้ได้วันละ 2-3 ลิตร',cat:'food'},
+  {id:1,text:'กินผักทุกวัน อย่างน้อย 2 มื้อ',cat:'food'},
+  {id:2,text:'กินผลไม้แทนขนมหวาน',cat:'food'},
+  {id:3,text:'ไม่กินอาหารแปรรูป',cat:'food'},
+  {id:4,text:'กินน้ำตาลให้น้อยกว่า 23 กรัม',cat:'food'},
+  {id:5,text:'กินโปรตีนให้เพียงพอทุกมื้อ',cat:'food'},
+  {id:6,text:'ส่งความรู้ให้กันและกัน 1 เรื่อง',cat:'social'},
+  {id:7,text:'ลงมือทำสิ่งสำคัญที่สุดของวัน เป็นสิ่งแรก',cat:'mind'},
+  {id:8,text:'หยุดกินเมื่ออิ่มประมาณ 80%',cat:'food'},
+  {id:9,text:'นอนให้ได้ 7-8 ชั่วโมง',cat:'sleep'},
+  {id:10,text:'เข้านอนและตื่นเวลาใกล้เคียงกันทุกวัน',cat:'sleep'},
+  {id:11,text:'รับแสงแดดยามเช้า 15-20 นาที',cat:'move'},
+  {id:12,text:'เดินให้ได้ 8,000-10,000 ก้าวต่อวัน',cat:'move'},
+  {id:13,text:'เวทเทรนนิ่ง',cat:'move'},
+  {id:14,text:'คาร์ดิโอหรือวิ่ง',cat:'move'},
+  {id:15,text:'ยืดเหยียดร่างกายวันละ 5-10 นาที',cat:'move'},
+  {id:16,text:'ลุกเดินทุก 1 ชั่วโมง หากนั่งทำงานนาน',cat:'move'},
+  {id:17,text:'ฝึกทรงตัวหรือบริหารข้อต่อสัปดาห์ละ 2 ครั้ง',cat:'move'},
+  {id:18,text:'วางแผน/จัดลำดับความสำคัญของงาน 3 ข้อสำหรับวันพรุ่งนี้ ก่อนเข้านอน',cat:'mind'},
+  {id:19,text:'ออกกำลังกายแม้ไม่มีแรง อย่างน้อย 10 นาที',cat:'move'},
+  {id:20,text:'จด 3 สิ่งที่รู้สึกขอบคุณในแต่ละวัน',cat:'mind'},
+  {id:21,text:'จด 5 เรื่องดีๆ ที่ตัวเองทำได้ในวันนี้',cat:'mind'},
+  {id:22,text:'พูดกับตัวเองด้วยความเมตตา ไม่ด่าตัวเอง',cat:'mind'},
+  {id:23,text:'หยุดเปรียบเทียบตัวเองกับคนอื่น',cat:'mind'},
+  {id:24,text:'ลดเวลาหน้าจอ ก่อนนอนอย่างน้อย 30 นาที',cat:'sleep'},
+  {id:25,text:'ปิดการแจ้งเตือนที่ไม่จำเป็น',cat:'mind'},
+  {id:26,text:'อ่านหนังสือหรือฟังสิ่งที่ได้ความรู้ 30 นาทีต่อวัน',cat:'mind'},
+  {id:27,text:'โทรหา หรือทักหาคนที่รักบ้าง',cat:'social'},
+  {id:28,text:'ใช้เวลาอยู่กับตัวเองแบบไม่มีสิ่งรบกวน',cat:'mind'},
+  {id:29,text:'ให้คะแนนตัวเองจากความสม่ำเสมอ ไม่ใช่ความสมบูรณ์แบบ',cat:'mind'},
+];
+
+const CATS = {
+  food:{label:'🥗 โภชนาการ',cls:'tag-food'},
+  sleep:{label:'😴 การนอนหลับ',cls:'tag-sleep'},
+  move:{label:'🏃 การเคลื่อนไหว',cls:'tag-move'},
+  mind:{label:'🧠 จิตใจ & สมาธิ',cls:'tag-mind'},
+  social:{label:'🤝 สังคม',cls:'tag-social'},
+};
+
+const TODAY = new Date();
+let state = {
+  year: TODAY.getFullYear(),
+  month: TODAY.getMonth(),
+  selDay: TODAY.getDate(),
+  person: 'p',
+  view: 'single',
+  data: JSON.parse(localStorage.getItem('habits_data')||'{}')
+};
+
+function key(y,m,d,who){return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}-${who}`}
+function dayKey(y,m,d){return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`}
+
+function save(){
+  try{localStorage.setItem('habits_data',JSON.stringify(state.data))}catch(e){}
+}
+
+function isChecked(y,m,d,who,id){
+  const k=key(y,m,d,who);
+  return state.data[k]&&state.data[k].includes(id);
+}
+
+function toggle(y,m,d,who,id){
+  const k=key(y,m,d,who);
+  if(!state.data[k])state.data[k]=[];
+  const idx=state.data[k].indexOf(id);
+  if(idx>=0)state.data[k].splice(idx,1);
+  else state.data[k].push(id);
+  save();
+  render();
+}
+
+function countDay(y,m,d,who){
+  const k=key(y,m,d,who);
+  return state.data[k]?state.data[k].length:0;
+}
+
+function changeMonth(dir){state.month+=dir;if(state.month>11){state.month=0;state.year++}if(state.month<0){state.month=11;state.year--}render()}
+function setPerson(p){state.person=p;render()}
+function setView(v){state.view=v;render()}
+
+const THAI_MONTHS=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const THAI_DAYS=['อา','จ','อ','พ','พฤ','ศ','ส'];
+
+function renderCal(){
+  const {year,month,selDay}=state;
+  document.getElementById('month-label').textContent=`${THAI_MONTHS[month]} ${year+543}`;
+  const grid=document.getElementById('cal-grid');
+  let html=THAI_DAYS.map(d=>`<div class="cal-day-name">${d}</div>`).join('');
+  const first=new Date(year,month,1).getDay();
+  for(let i=0;i<first;i++)html+=`<div class="cal-day empty"></div>`;
+  const days=new Date(year,month+1,0).getDate();
+  for(let d=1;d<=days;d++){
+    const isToday=d===TODAY.getDate()&&month===TODAY.getMonth()&&year===TODAY.getFullYear();
+    const isSel=d===selDay;
+    const cp=countDay(year,month,d,'p');
+    const cn=countDay(year,month,d,'n');
+    const dotP=cp>0?`<div class="dot dot-p"></div>`:'';
+    const dotN=cn>0?`<div class="dot dot-n"></div>`:'';
+    html+=`<div class="cal-day${isSel?' selected':''}${isToday?' today':''}" onclick="selDay(${d})">
+      <span>${d}</span>
+      <div class="dot-row">${dotP}${dotN}</div>
+    </div>`;
+  }
+  grid.innerHTML=html;
+}
+
+function selDay(d){state.selDay=d;render()}
+
+function thaiDate(y,m,d){return `${d} ${THAI_MONTHS[m]} ${y+543}`}
+
+function renderSingle(){
+  const {year,month,selDay,person}=state;
+  document.getElementById('tab-single').className='tab active';
+  document.getElementById('tab-compare').className='tab';
+  document.getElementById('view-single').style.display='';
+  document.getElementById('view-compare').style.display='none';
+
+  document.getElementById('btn-p').className='p-btn'+(person==='p'?' active-p':'');
+  document.getElementById('btn-n').className='p-btn'+(person==='n'?' active-n':'');
+  document.getElementById('date-display').textContent=thaiDate(year,month,selDay);
+
+  const k=key(year,month,selDay,person);
+  const checked=state.data[k]||[];
+  const done=checked.length;
+  document.getElementById('stat-done').textContent=done;
+  document.getElementById('stat-pct').textContent=Math.round(done/30*100)+'%';
+
+  const bycat={};
+  HABITS.forEach(h=>{if(!bycat[h.cat])bycat[h.cat]=[];bycat[h.cat].push(h)});
+  let html='';
+  Object.entries(CATS).forEach(([cat,{label,cls}])=>{
+    if(!bycat[cat])return;
+    html+=`<div class="cat-section"><div class="cat-title"><span class="cat-tag ${cls}" style="font-size:11px;padding:3px 8px">${label}</span></div><div class="habits-list">`;
+    bycat[cat].forEach(h=>{
+      const chk=checked.includes(h.id);
+      const chkcls=chk?(person==='p'?'checked-p':'checked-n'):'';
+      html+=`<div class="habit-item" onclick="toggle(${year},${month},${selDay},'${person}',${h.id})">
+        <div class="checkbox ${chkcls}">${chk?'<i class="ti ti-check"></i>':''}</div>
+        <span class="habit-text">${h.text}</span>
+      </div>`;
+    });
+    html+='</div></div>';
+  });
+  document.getElementById('habits-by-cat').innerHTML=html;
+}
+
+function renderCompare(){
+  const {year,month,selDay}=state;
+  document.getElementById('tab-single').className='tab';
+  document.getElementById('tab-compare').className='tab active';
+  document.getElementById('view-single').style.display='none';
+  document.getElementById('view-compare').style.display='';
+  document.getElementById('date-display-cmp').textContent=thaiDate(year,month,selDay);
+
+  ['p','n'].forEach(who=>{
+    const k=key(year,month,selDay,who);
+    const checked=state.data[k]||[];
+    const cnt=checked.length;
+    document.getElementById(`score-${who}-text`).textContent=`${cnt} / 30 ข้อ`;
+    document.getElementById(`score-bar-${who}`).style.width=Math.round(cnt/30*100)+'%';
+    let html='';
+    HABITS.forEach(h=>{
+      const chk=checked.includes(h.id);
+      const chkcls=chk?(who==='p'?'checked-p':'checked-n'):'';
+      html+=`<div class="habit-item" onclick="toggle(${year},${month},${selDay},'${who}',${h.id})">
+        <div class="checkbox ${chkcls}" style="width:16px;height:16px">${chk?'<i class="ti ti-check" style="font-size:10px"></i>':''}</div>
+        <span class="habit-text" style="font-size:12px">${h.text}</span>
+      </div>`;
+    });
+    document.getElementById(`cmp-list-${who}`).innerHTML=html;
+  });
+}
+
+function render(){
+  renderCal();
+  if(state.view==='single')renderSingle();
+  else renderCompare();
+}
+
+render();
+</script>
