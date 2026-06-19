@@ -9,267 +9,200 @@
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&family=Noto+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --pp: #7C5CBF;
-    --pp-light: #EDE8F8;
-    --nn: #D45F7F;
-    --nn-light: #FAE8EE;
-    --bg: #F7F6F3;
-    --surface: #FFFFFF;
-    --border: rgba(0,0,0,0.08);
-    --border-mid: rgba(0,0,0,0.14);
-    --text: #1A1A1A;
-    --text-2: #555;
-    --text-3: #999;
-    --radius: 12px;
-    --radius-sm: 8px;
-    --cat-food: #2E7D5E; --cat-food-bg: #E5F4EE;
-    --cat-sleep: #5A4A9E; --cat-sleep-bg: #EEEAF8;
-    --cat-move: #3B6E2A; --cat-move-bg: #EBF5E5;
-    --cat-mind: #8A5A10; --cat-mind-bg: #FBF0DE;
-    --cat-social: #A02060; --cat-social-bg: #FAE5EF;
+    --pp:#7C5CBF; --pp-light:#EDE8F8; --pp-mid:#A98FD6;
+    --nn:#D45F7F; --nn-light:#FAE8EE; --nn-mid:#E495AB;
+    --bg:#F7F6F3; --surface:#FFFFFF;
+    --border:rgba(0,0,0,0.08); --border-mid:rgba(0,0,0,0.14);
+    --text:#1A1A1A; --text-2:#555; --text-3:#999;
+    --radius:12px; --radius-sm:8px;
+    --cat-food:#2E7D5E; --cat-food-bg:#E5F4EE;
+    --cat-sleep:#5A4A9E; --cat-sleep-bg:#EEEAF8;
+    --cat-move:#3B6E2A; --cat-move-bg:#EBF5E5;
+    --cat-mind:#8A5A10; --cat-mind-bg:#FBF0DE;
+    --cat-social:#A02060; --cat-social-bg:#FAE5EF;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Sarabun', 'Noto Sans Thai', sans-serif;
-    background: var(--bg); color: var(--text);
-    min-height: 100vh; font-size: 15px; line-height: 1.6;
-  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Sarabun','Noto Sans Thai',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6}
 
   /* TOPBAR */
-  .topbar {
-    background: var(--surface); border-bottom: 1px solid var(--border);
-    padding: 0 24px; display: flex; align-items: center;
-    justify-content: space-between; height: 56px;
-    position: sticky; top: 0; z-index: 100;
-  }
-  .logo { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-  .logo-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--pp), var(--nn));
-  }
-  .nav-tabs {
-    display: flex; gap: 4px; background: var(--bg);
-    border-radius: var(--radius-sm); padding: 3px;
-  }
-  .nav-tab {
-    padding: 5px 16px; border-radius: 6px; border: none;
-    background: transparent; color: var(--text-2); cursor: pointer;
-    font-family: inherit; font-size: 14px; font-weight: 400; transition: all 0.15s;
-  }
-  .nav-tab.active {
-    background: var(--surface); color: var(--text);
-    font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  }
-
-  /* SYNC STATUS */
-  .sync-badge {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 12px; color: var(--text-3); padding: 4px 10px;
-    border-radius: 20px; border: 1px solid var(--border);
-  }
-  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; }
-  .sync-dot.online { background: #4CAF50; }
-  .sync-dot.syncing { background: #FF9800; animation: pulse 1s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;gap:12px}
+  .logo{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;white-space:nowrap}
+  .logo-dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,var(--pp),var(--nn));flex-shrink:0}
+  .nav-tabs{display:flex;gap:4px;background:var(--bg);border-radius:var(--radius-sm);padding:3px}
+  .nav-tab{padding:5px 14px;border-radius:6px;border:none;background:transparent;color:var(--text-2);cursor:pointer;font-family:inherit;font-size:13px;font-weight:400;transition:all .15s;white-space:nowrap}
+  .nav-tab.active{background:var(--surface);color:var(--text);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+  .sync-badge{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-3);padding:4px 10px;border-radius:20px;border:1px solid var(--border);white-space:nowrap;flex-shrink:0}
+  .sync-dot{width:7px;height:7px;border-radius:50%;background:#ccc;flex-shrink:0}
+  .sync-dot.online{background:#4CAF50}
+  .sync-dot.syncing{background:#FF9800;animation:pulse 1s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
   /* LAYOUT */
-  .main {
-    max-width: 960px; margin: 0 auto; padding: 24px 20px;
-    display: grid; grid-template-columns: 280px 1fr;
-    gap: 20px; align-items: start;
-  }
-  .sidebar { position: sticky; top: 76px; }
-  .card {
-    background: var(--surface); border-radius: var(--radius);
-    border: 1px solid var(--border); overflow: hidden;
-  }
+  .main{max-width:1040px;margin:0 auto;padding:24px 20px;display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:start}
+  .sidebar{position:sticky;top:76px}
+  .card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden}
 
   /* CALENDAR */
-  .cal-head {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 16px 10px;
-  }
-  .cal-month { font-size: 15px; font-weight: 600; }
-  .cal-nav {
-    width: 28px; height: 28px; border-radius: 6px;
-    border: 1px solid var(--border-mid); background: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-2); font-size: 16px; transition: background 0.1s;
-  }
-  .cal-nav:hover { background: var(--bg); }
-  .cal-grid {
-    display: grid; grid-template-columns: repeat(7,1fr);
-    padding: 0 10px 10px; gap: 3px;
-  }
-  .cal-dn { text-align: center; font-size: 11px; font-weight: 500; color: var(--text-3); padding: 4px 0 6px; }
-  .cal-d {
-    aspect-ratio: 1; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; border-radius: 8px;
-    cursor: pointer; font-size: 13px; color: var(--text-2);
-    border: 1.5px solid transparent; transition: all 0.12s; gap: 2px;
-  }
-  .cal-d:hover { background: var(--bg); color: var(--text); }
-  .cal-d.today { background: var(--bg); font-weight: 600; color: var(--text); }
-  .cal-d.selected { border-color: var(--pp); color: var(--pp); font-weight: 600; background: var(--pp-light); }
-  .cal-d.empty { cursor: default; pointer-events: none; }
-  .dots { display: flex; gap: 2px; }
-  .dot { width: 4px; height: 4px; border-radius: 50%; }
-  .dot-p { background: var(--pp); } .dot-n { background: var(--nn); }
+  .cal-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px}
+  .cal-month{font-size:15px;font-weight:600}
+  .cal-nav{width:28px;height:28px;border-radius:6px;border:1px solid var(--border-mid);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-2);font-size:16px;transition:background .1s}
+  .cal-nav:hover{background:var(--bg)}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);padding:0 10px 10px;gap:3px}
+  .cal-dn{text-align:center;font-size:11px;font-weight:500;color:var(--text-3);padding:4px 0 6px}
+  .cal-d{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text-2);border:1.5px solid transparent;transition:all .12s;gap:2px}
+  .cal-d:hover{background:var(--bg);color:var(--text)}
+  .cal-d.today{background:var(--bg);font-weight:600;color:var(--text)}
+  .cal-d.selected{border-color:var(--pp);color:var(--pp);font-weight:600;background:var(--pp-light)}
+  .cal-d.empty{cursor:default;pointer-events:none}
+  .dots{display:flex;gap:2px}
+  .dot{width:4px;height:4px;border-radius:50%}
+  .dot-p{background:var(--pp)} .dot-n{background:var(--nn)}
 
   /* PERSON STRIP */
-  .person-strip {
-    display: grid; grid-template-columns: 1fr 1fr;
-    padding: 12px; gap: 8px; border-top: 1px solid var(--border);
-  }
-  .p-card {
-    border-radius: var(--radius-sm); border: 1.5px solid transparent;
-    padding: 10px; cursor: pointer; transition: all 0.15s; background: var(--bg);
-  }
-  .p-card:hover { border-color: var(--border-mid); }
-  .p-card.active-p { background: var(--pp-light); border-color: var(--pp); }
-  .p-card.active-n { background: var(--nn-light); border-color: var(--nn); }
-  .p-pct { font-size: 20px; font-weight: 600; }
-  .pct-p { color: var(--pp); } .pct-n { color: var(--nn); }
-  .p-name { font-size: 13px; font-weight: 500; color: var(--text-2); margin-top: 4px; }
-  .p-bar { height: 3px; border-radius: 2px; background: rgba(0,0,0,0.08); margin-top: 6px; overflow: hidden; }
-  .p-bar-fill { height: 100%; border-radius: 2px; transition: width 0.4s; }
-  .fill-p { background: var(--pp); } .fill-n { background: var(--nn); }
+  .person-strip{display:grid;grid-template-columns:1fr 1fr;padding:12px;gap:8px;border-top:1px solid var(--border)}
+  .p-card{border-radius:var(--radius-sm);border:1.5px solid transparent;padding:10px;cursor:pointer;transition:all .15s;background:var(--bg)}
+  .p-card:hover{border-color:var(--border-mid)}
+  .p-card.active-p{background:var(--pp-light);border-color:var(--pp)}
+  .p-card.active-n{background:var(--nn-light);border-color:var(--nn)}
+  .p-pct{font-size:20px;font-weight:600}
+  .pct-p{color:var(--pp)} .pct-n{color:var(--nn)}
+  .p-name{font-size:13px;font-weight:500;color:var(--text-2);margin-top:4px}
+  .p-bar{height:3px;border-radius:2px;background:rgba(0,0,0,.08);margin-top:6px;overflow:hidden}
+  .p-bar-fill{height:100%;border-radius:2px;transition:width .4s}
+  .fill-p{background:var(--pp)} .fill-n{background:var(--nn)}
 
   /* CONTENT */
-  .date-header { margin-bottom: 16px; }
-  .date-title { font-size: 20px; font-weight: 600; }
-  .date-sub { font-size: 13px; color: var(--text-3); }
+  .date-header{margin-bottom:16px}
+  .date-title{font-size:20px;font-weight:600}
+  .date-sub{font-size:13px;color:var(--text-3)}
 
-  /* PERSON SWITCHER (single view) */
-  .person-switcher { display: flex; gap: 8px; margin-bottom: 16px; }
-  .ps-btn {
-    padding: 7px 20px; border-radius: var(--radius-sm);
-    border: 1.5px solid var(--border-mid); background: var(--surface);
-    color: var(--text-2); cursor: pointer; font-family: inherit;
-    font-size: 14px; font-weight: 500; transition: all 0.15s;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .ps-btn:hover { border-color: var(--border-mid); background: var(--bg); }
-  .ps-btn.active-p { background: var(--pp-light); border-color: var(--pp); color: var(--pp); }
-  .ps-btn.active-n { background: var(--nn-light); border-color: var(--nn); color: var(--nn); }
-  .ps-avatar {
-    width: 22px; height: 22px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 600;
-  }
-  .av-p { background: var(--pp); color: #fff; }
-  .av-n { background: var(--nn); color: #fff; }
+  /* PERSON SWITCHER */
+  .person-switcher{display:flex;gap:8px;margin-bottom:16px}
+  .ps-btn{padding:7px 20px;border-radius:var(--radius-sm);border:1.5px solid var(--border-mid);background:var(--surface);color:var(--text-2);cursor:pointer;font-family:inherit;font-size:14px;font-weight:500;transition:all .15s;display:flex;align-items:center;gap:8px}
+  .ps-btn:hover{background:var(--bg)}
+  .ps-btn.active-p{background:var(--pp-light);border-color:var(--pp);color:var(--pp)}
+  .ps-btn.active-n{background:var(--nn-light);border-color:var(--nn);color:var(--nn)}
+  .ps-avatar{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600}
+  .av-p{background:var(--pp);color:#fff} .av-n{background:var(--nn);color:#fff}
 
   /* HABITS */
-  .cat-block { margin-bottom: 20px; }
-  .cat-label {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 12px; font-weight: 600; padding: 4px 10px;
-    border-radius: 20px; margin-bottom: 8px; letter-spacing: 0.02em;
-  }
-  .habit {
-    display: flex; align-items: flex-start; gap: 12px;
-    padding: 10px 14px; border-radius: var(--radius-sm); cursor: pointer;
-    transition: all 0.12s; background: var(--surface);
-    border: 1px solid var(--border); margin-bottom: 4px;
-  }
-  .habit:hover { border-color: var(--border-mid); }
-  .habit.done-p { background: var(--pp-light); border-color: rgba(124,92,191,0.3); }
-  .habit.done-n { background: var(--nn-light); border-color: rgba(212,95,127,0.3); }
-  .chk {
-    width: 20px; height: 20px; border-radius: 5px;
-    border: 1.5px solid var(--border-mid); flex-shrink: 0; margin-top: 1px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s; font-size: 13px; color: #fff; font-weight: 600;
-  }
-  .chk.chk-p { background: var(--pp); border-color: var(--pp); }
-  .chk.chk-n { background: var(--nn); border-color: var(--nn); }
-  .habit-text { font-size: 14px; line-height: 1.5; flex: 1; }
-  .habit.done-p .habit-text { color: var(--pp); }
-  .habit.done-n .habit-text { color: var(--nn); }
+  .cat-block{margin-bottom:20px}
+  .cat-label{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;margin-bottom:8px;letter-spacing:.02em}
+  .habit{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border-radius:var(--radius-sm);cursor:pointer;transition:all .12s;background:var(--surface);border:1px solid var(--border);margin-bottom:4px}
+  .habit:hover{border-color:var(--border-mid)}
+  .habit.done-p{background:var(--pp-light);border-color:rgba(124,92,191,.3)}
+  .habit.done-n{background:var(--nn-light);border-color:rgba(212,95,127,.3)}
+  .chk{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border-mid);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:13px;color:#fff;font-weight:600}
+  .chk.chk-p{background:var(--pp);border-color:var(--pp)}
+  .chk.chk-n{background:var(--nn);border-color:var(--nn)}
+  .habit-text{font-size:14px;line-height:1.5;flex:1}
+  .habit.done-p .habit-text{color:var(--pp)}
+  .habit.done-n .habit-text{color:var(--nn)}
 
   /* COMPARE VIEW */
-  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .cmp-panel {
-    background: var(--surface); border-radius: var(--radius);
-    border: 1px solid var(--border); overflow: hidden;
-  }
-  .cmp-head {
-    padding: 14px 16px 12px; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 10px;
-  }
-  .avatar {
-    width: 32px; height: 32px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 600;
-  }
-  .cmp-name { font-size: 15px; font-weight: 600; }
-  .cmp-score { margin-left: auto; font-size: 13px; color: var(--text-3); }
-  .cmp-bar-wrap { height: 4px; background: var(--bg); }
-  .cmp-bar { height: 100%; transition: width 0.4s; }
-  .bar-p { background: var(--pp); } .bar-n { background: var(--nn); }
-  .cmp-items {
-    padding: 8px; display: flex; flex-direction: column;
-    gap: 2px; max-height: 68vh; overflow-y: auto;
-  }
-  .cmp-item {
-    display: flex; align-items: flex-start; gap: 8px;
-    padding: 7px 8px; border-radius: 6px; cursor: pointer; transition: background 0.1s;
-  }
-  .cmp-item:hover { background: var(--bg); }
-  .cmp-item.done-p { background: var(--pp-light); }
-  .cmp-item.done-n { background: var(--nn-light); }
-  .cmp-chk {
-    width: 16px; height: 16px; border-radius: 4px;
-    border: 1.5px solid var(--border-mid); flex-shrink: 0; margin-top: 2px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; font-weight: 700; color: #fff;
-  }
-  .cmp-chk.chk-p { background: var(--pp); border-color: var(--pp); }
-  .cmp-chk.chk-n { background: var(--nn); border-color: var(--nn); }
-  .cmp-text { font-size: 12px; color: var(--text-2); line-height: 1.4; }
-  .cmp-item.done-p .cmp-text { color: var(--pp); }
-  .cmp-item.done-n .cmp-text { color: var(--nn); }
+  .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .cmp-panel{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden}
+  .cmp-head{padding:14px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+  .avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+  .cmp-name{font-size:15px;font-weight:600}
+  .cmp-score{margin-left:auto;font-size:13px;color:var(--text-3)}
+  .cmp-bar-wrap{height:4px;background:var(--bg)}
+  .cmp-bar{height:100%;transition:width .4s}
+  .bar-p{background:var(--pp)} .bar-n{background:var(--nn)}
+  .cmp-items{padding:8px;display:flex;flex-direction:column;gap:2px;max-height:68vh;overflow-y:auto}
+  .cmp-item{display:flex;align-items:flex-start;gap:8px;padding:7px 8px;border-radius:6px;cursor:pointer;transition:background .1s}
+  .cmp-item:hover{background:var(--bg)}
+  .cmp-item.done-p{background:var(--pp-light)}
+  .cmp-item.done-n{background:var(--nn-light)}
+  .cmp-chk{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border-mid);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+  .cmp-chk.chk-p{background:var(--pp);border-color:var(--pp)}
+  .cmp-chk.chk-n{background:var(--nn);border-color:var(--nn)}
+  .cmp-text{font-size:12px;color:var(--text-2);line-height:1.4}
+  .cmp-item.done-p .cmp-text{color:var(--pp)}
+  .cmp-item.done-n .cmp-text{color:var(--nn)}
+
+  /* ── MONTHLY SUMMARY ── */
+  .summary-header{margin-bottom:20px}
+  .summary-title{font-size:20px;font-weight:600}
+  .summary-sub{font-size:13px;color:var(--text-3);margin-top:2px}
+
+  /* stat cards row */
+  .stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+  .stat-card-label{font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+  .stat-card-row{display:flex;align-items:flex-end;gap:16px}
+  .stat-val{font-size:22px;font-weight:600;line-height:1}
+  .stat-val.col-p{color:var(--pp)} .stat-val.col-n{color:var(--nn)}
+  .stat-who{font-size:11px;color:var(--text-3);margin-bottom:2px}
+
+  /* legend */
+  .legend{display:flex;gap:16px;margin-bottom:12px;align-items:center}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-2)}
+  .legend-dot{width:10px;height:10px;border-radius:3px}
+  .legend-dot-p{background:var(--pp)} .legend-dot-n{background:var(--nn)}
+
+  /* chart container */
+  .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 20px 12px;margin-bottom:24px}
+  .chart-card-title{font-size:14px;font-weight:600;margin-bottom:16px;color:var(--text)}
+  .chart-wrap{overflow-x:auto;overflow-y:hidden}
+  .chart-inner{min-width:600px}
+
+  /* bar chart SVG wrapper */
+  .chart-svg-wrap{width:100%;overflow-x:auto}
+
+  /* day table */
+  .day-table{width:100%;border-collapse:collapse;font-size:13px}
+  .day-table th{text-align:left;padding:8px 12px;color:var(--text-3);font-weight:500;border-bottom:1px solid var(--border);font-size:12px}
+  .day-table td{padding:7px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+  .day-table tr:last-child td{border-bottom:none}
+  .day-table tr:hover td{background:var(--bg)}
+  .day-table tr.is-today td{background:rgba(124,92,191,.04)}
+  .day-num{font-weight:600;color:var(--text);width:32px}
+  .day-dow{color:var(--text-3);font-size:12px;width:60px}
+  .pct-pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:12px;font-weight:600;min-width:44px;text-align:center}
+  .pct-pill.col-p{background:var(--pp-light);color:var(--pp)}
+  .pct-pill.col-n{background:var(--nn-light);color:var(--nn)}
+  .pct-pill.empty{background:var(--bg);color:var(--text-3);font-weight:400}
+  .mini-bar-wrap{flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;min-width:60px}
+  .mini-bar{height:100%;border-radius:4px;transition:width .3s}
+  .mini-bar-p{background:var(--pp)} .mini-bar-n{background:var(--nn)}
+  .bar-cell{display:flex;align-items:center;gap:8px}
+  .winner-badge{font-size:10px;padding:1px 6px;border-radius:10px;font-weight:600}
+  .win-p{background:var(--pp-light);color:var(--pp)}
+  .win-n{background:var(--nn-light);color:var(--nn)}
+  .win-tie{background:#F0F0F0;color:var(--text-3)}
+  .no-data-row td{color:var(--text-3);text-align:center;padding:24px;font-size:13px}
 
   /* LOADING OVERLAY */
-  .loading-overlay {
-    position: fixed; inset: 0; background: var(--bg);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 12px; z-index: 999; transition: opacity 0.3s;
-  }
-  .loading-spinner {
-    width: 36px; height: 36px; border-radius: 50%;
-    border: 3px solid var(--border-mid); border-top-color: var(--pp);
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-text { font-size: 14px; color: var(--text-3); }
+  .loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:999;transition:opacity .3s}
+  .loading-spinner{width:36px;height:36px;border-radius:50%;border:3px solid var(--border-mid);border-top-color:var(--pp);animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading-text{font-size:14px;color:var(--text-3)}
 
-  @media (max-width: 700px) {
-    .main { grid-template-columns: 1fr; padding: 16px; }
-    .sidebar { position: static; }
-    .compare-grid { grid-template-columns: 1fr; }
-    .topbar { padding: 0 16px; gap: 8px; }
-    .sync-badge span { display: none; }
+  @media(max-width:700px){
+    .main{grid-template-columns:1fr;padding:16px}
+    .sidebar{position:static}
+    .compare-grid{grid-template-columns:1fr}
+    .topbar{padding:0 12px}
+    .sync-badge span{display:none}
+    .stat-cards{grid-template-columns:1fr 1fr}
+    .nav-tab{padding:5px 10px}
   }
 </style>
 </head>
 <body>
 
-<!-- Loading overlay -->
 <div class="loading-overlay" id="loading-overlay">
   <div class="loading-spinner"></div>
   <div class="loading-text">กำลังเชื่อมต่อ Firebase...</div>
 </div>
 
 <nav class="topbar">
-  <div class="logo">
-    <span class="logo-dot"></span>
-    Daily Habits
-  </div>
+  <div class="logo"><span class="logo-dot"></span>Daily Habits</div>
   <div class="nav-tabs">
-    <button class="nav-tab active" id="tab-single" onclick="setView('single')">บันทึก</button>
-    <button class="nav-tab" id="tab-compare" onclick="setView('compare')">เปรียบเทียบ</button>
+    <button class="nav-tab active" id="tab-single"  onclick="setView('single')">บันทึก</button>
+    <button class="nav-tab"        id="tab-compare" onclick="setView('compare')">เปรียบเทียบ</button>
+    <button class="nav-tab"        id="tab-summary" onclick="setView('summary')">สรุปเดือน</button>
   </div>
   <div class="sync-badge">
     <div class="sync-dot" id="sync-dot"></div>
@@ -278,6 +211,7 @@
 </nav>
 
 <div class="main">
+  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="card">
       <div class="cal-head">
@@ -301,29 +235,32 @@
     </div>
   </aside>
 
+  <!-- CONTENT -->
   <main class="content">
-    <div class="date-header">
+    <div class="date-header" id="date-header">
       <div class="date-title" id="date-title"></div>
-      <div class="date-sub" id="date-sub"></div>
+      <div class="date-sub"   id="date-sub"></div>
     </div>
 
+    <!-- SINGLE -->
     <div id="view-single">
       <div class="person-switcher">
         <button class="ps-btn active-p" id="btn-p" onclick="setPerson('p')">
-          <div class="ps-avatar av-p">ป</div> ปังปอนด์
+          <div class="ps-avatar av-p">ป</div>ปังปอนด์
         </button>
         <button class="ps-btn" id="btn-n" onclick="setPerson('n')">
-          <div class="ps-avatar av-n">น</div> นานา
+          <div class="ps-avatar av-n">น</div>นานา
         </button>
       </div>
       <div id="habits-container"></div>
     </div>
 
+    <!-- COMPARE -->
     <div id="view-compare" style="display:none">
       <div class="compare-grid">
         <div class="cmp-panel">
           <div class="cmp-head">
-            <div class="avatar av-p" style="background:var(--pp-light);color:var(--pp)">ป</div>
+            <div class="avatar" style="background:var(--pp-light);color:var(--pp)">ป</div>
             <span class="cmp-name" style="color:var(--pp)">ปังปอนด์</span>
             <span class="cmp-score" id="cmp-score-p">0 / 30</span>
           </div>
@@ -332,7 +269,7 @@
         </div>
         <div class="cmp-panel">
           <div class="cmp-head">
-            <div class="avatar av-n" style="background:var(--nn-light);color:var(--nn)">น</div>
+            <div class="avatar" style="background:var(--nn-light);color:var(--nn)">น</div>
             <span class="cmp-name" style="color:var(--nn)">นานา</span>
             <span class="cmp-score" id="cmp-score-n">0 / 30</span>
           </div>
@@ -341,13 +278,49 @@
         </div>
       </div>
     </div>
+
+    <!-- MONTHLY SUMMARY -->
+    <div id="view-summary" style="display:none">
+      <div class="summary-header">
+        <div class="summary-title" id="sum-title"></div>
+        <div class="summary-sub">เปรียบเทียบรายวันตลอดเดือน</div>
+      </div>
+
+      <!-- STAT CARDS -->
+      <div class="stat-cards" id="stat-cards"></div>
+
+      <!-- BAR CHART -->
+      <div class="chart-card">
+        <div class="chart-card-title">% ความสำเร็จรายวัน</div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot legend-dot-p"></div>ปังปอนด์</div>
+          <div class="legend-item"><div class="legend-dot legend-dot-n"></div>นานา</div>
+        </div>
+        <div class="chart-svg-wrap" id="chart-svg-wrap"></div>
+      </div>
+
+      <!-- DAY TABLE -->
+      <div class="card" style="overflow:hidden">
+        <table class="day-table" id="day-table">
+          <thead>
+            <tr>
+              <th>วัน</th>
+              <th></th>
+              <th style="min-width:100px">ปังปอนด์</th>
+              <th style="min-width:100px">นานา</th>
+              <th>ชนะ</th>
+            </tr>
+          </thead>
+          <tbody id="day-tbody"></tbody>
+        </table>
+      </div>
+    </div>
   </main>
 </div>
 
-<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
+import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA_cGQ2Bc_lc1K-JXOT2j8Xj4vcxej0ALg",
@@ -360,9 +333,9 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const db  = getDatabase(app);
 
-// ── DATA ──────────────────────────────────────────────
+/* ── DATA ─────────────────────────────────────────── */
 const HABITS = [
   {id:0,text:'ดื่มน้ำเปล่าให้ได้วันละ 2-3 ลิตร',cat:'food'},
   {id:1,text:'กินผักทุกวัน อย่างน้อย 2 มื้อ',cat:'food'},
@@ -395,7 +368,6 @@ const HABITS = [
   {id:28,text:'ส่งความรู้ให้กันและกัน 1 เรื่อง',cat:'social'},
   {id:29,text:'โทรหา หรือทักหาคนที่รักบ้าง',cat:'social'},
 ];
-
 const CATS = {
   food:  {label:'🥗 โภชนาการ',      bg:'var(--cat-food-bg)',   color:'var(--cat-food)'},
   sleep: {label:'😴 การนอนหลับ',    bg:'var(--cat-sleep-bg)',  color:'var(--cat-sleep)'},
@@ -403,197 +375,291 @@ const CATS = {
   mind:  {label:'🧠 จิตใจ & สมาธิ', bg:'var(--cat-mind-bg)',   color:'var(--cat-mind)'},
   social:{label:'🤝 สังคม',         bg:'var(--cat-social-bg)', color:'var(--cat-social)'},
 };
-
-const THAI_MONTHS = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
-const THAI_DAYS_SHORT = ['อา','จ','อ','พ','พฤ','ศ','ส'];
-const THAI_DAYS_LONG  = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+const THAI_MONTHS    = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const THAI_DAYS_S    = ['อา','จ','อ','พ','พฤ','ศ','ส'];
+const THAI_DAYS_L    = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
 
 const TODAY = new Date();
-let state = {
-  year: TODAY.getFullYear(), month: TODAY.getMonth(), day: TODAY.getDate(),
-  person: 'p', view: 'single',
-  cache: {}   // cache[dbKey] = array of habit ids
-};
+let state = { year:TODAY.getFullYear(), month:TODAY.getMonth(), day:TODAY.getDate(), person:'p', view:'single', cache:{} };
 
-// ── FIREBASE HELPERS ──────────────────────────────────
-function dbKey(y, m, d, who) {
-  return `habits/${y}_${String(m+1).padStart(2,'0')}_${String(d).padStart(2,'0')}/${who}`;
+/* ── FIREBASE ─────────────────────────────────────── */
+function dayPath(y,m,d,who){ return `habits/${y}_${String(m+1).padStart(2,'0')}_${String(d).padStart(2,'0')}/${who}`; }
+function cKey(y,m,d,who){ return `${y}_${m}_${d}_${who}`; }
+
+function setSyncStatus(s){
+  const dot=document.getElementById('sync-dot'), txt=document.getElementById('sync-text');
+  if(s==='online'){dot.className='sync-dot online';txt.textContent='ซิงค์แล้ว'}
+  if(s==='syncing'){dot.className='sync-dot syncing';txt.textContent='กำลังบันทึก...'}
+  if(s==='offline'){dot.className='sync-dot';txt.textContent='ออฟไลน์'}
 }
 
-function setSyncStatus(status) {
-  const dot  = document.getElementById('sync-dot');
-  const text = document.getElementById('sync-text');
-  if (status === 'online')  { dot.className='sync-dot online'; text.textContent='ซิงค์แล้ว'; }
-  if (status === 'syncing') { dot.className='sync-dot syncing'; text.textContent='กำลังบันทึก...'; }
-  if (status === 'offline') { dot.className='sync-dot'; text.textContent='ออฟไลน์'; }
-}
+// Subscribe to whole month (for summary) + selected day
+let activeSubs = [];
+function unsubAll(){ activeSubs.forEach(u=>u&&u()); activeSubs=[]; }
 
-// Subscribe to a day's data for BOTH persons — re-render on any change
-let unsubscribers = [];
-function subscribeDay(y, m, d) {
-  unsubscribers.forEach(u => u());
-  unsubscribers = [];
-  ['p','n'].forEach(who => {
-    const r = ref(db, dbKey(y,m,d,who));
-    const unsub = onValue(r, snap => {
-      const val = snap.val();
-      const cacheKey = `${y}_${m}_${d}_${who}`;
-      state.cache[cacheKey] = val ? Object.keys(val).map(Number) : [];
-      renderAll();
-    }, err => { setSyncStatus('offline'); });
-    unsubscribers.push(() => {}); // onValue doesn't return unsubscribe in compat mode — track refs instead
-  });
-}
-
-async function toggle(y, m, d, who, id) {
-  setSyncStatus('syncing');
-  const cacheKey = `${y}_${m}_${d}_${who}`;
-  const current = [...(state.cache[cacheKey] || [])];
-  const idx = current.indexOf(id);
-  if (idx >= 0) current.splice(idx,1); else current.push(id);
-  state.cache[cacheKey] = current;
-
-  // Optimistic render
-  renderAll();
-
-  // Write to Firebase: store as object {0:true, 5:true, ...}
-  const r = ref(db, dbKey(y,m,d,who));
-  const obj = {};
-  current.forEach(i => { obj[i] = true; });
-  try {
-    await set(r, Object.keys(obj).length ? obj : null);
-    setSyncStatus('online');
-  } catch(e) { setSyncStatus('offline'); }
-}
-
-// Expose toggle globally for onclick handlers
-window.toggle = toggle;
-
-function getChecked(y, m, d, who) {
-  return state.cache[`${y}_${m}_${d}_${who}`] || [];
-}
-function countDay(y, m, d, who) { return getChecked(y,m,d,who).length; }
-
-// ── NAV ───────────────────────────────────────────────
-window.changeMonth = function(dir) {
-  state.month += dir;
-  if (state.month > 11) { state.month = 0; state.year++; }
-  if (state.month < 0)  { state.month = 11; state.year--; }
-  renderAll();
-};
-window.setView = function(v) { state.view = v; renderAll(); };
-window.setPerson = function(p) { state.person = p; renderAll(); };
-window.selectDay = function(d) {
-  state.day = d;
-  subscribeDay(state.year, state.month, d);
-};
-
-// ── RENDER ────────────────────────────────────────────
-function thaiDate(y,m,d) { return `${d} ${THAI_MONTHS[m]} ${y+543}`; }
-function thaiDow(y,m,d)  { return 'วัน' + THAI_DAYS_LONG[new Date(y,m,d).getDay()]; }
-
-function renderCal() {
-  const {year,month,day} = state;
-  document.getElementById('cal-month-label').textContent = `${THAI_MONTHS[month]} ${year+543}`;
-  const first = new Date(year,month,1).getDay();
-  const total = new Date(year,month+1,0).getDate();
-  let html = THAI_DAYS_SHORT.map(d=>`<div class="cal-dn">${d}</div>`).join('');
-  for (let i=0;i<first;i++) html+=`<div class="cal-d empty"></div>`;
-  for (let d=1;d<=total;d++) {
-    const isToday = d===TODAY.getDate()&&month===TODAY.getMonth()&&year===TODAY.getFullYear();
-    const isSel   = d===day;
-    const cp = countDay(year,month,d,'p'), cn = countDay(year,month,d,'n');
-    const dots = (cp>0?`<div class="dot dot-p"></div>`:'')+
-                 (cn>0?`<div class="dot dot-n"></div>`:'');
-    html+=`<div class="cal-d${isSel?' selected':''}${isToday?' today':''}" onclick="selectDay(${d})">
-      <span>${d}</span><div class="dots">${dots}</div>
-    </div>`;
+function subscribeMonth(y, m){
+  unsubAll();
+  const total = new Date(y,m+1,0).getDate();
+  for(let d=1;d<=total;d++){
+    ['p','n'].forEach(who=>{
+      const r = ref(db, dayPath(y,m,d,who));
+      const unsub = onValue(r, snap=>{
+        const val=snap.val();
+        state.cache[cKey(y,m,d,who)] = val ? Object.keys(val).map(Number) : [];
+        renderAll();
+      }, _=>setSyncStatus('offline'));
+      activeSubs.push(unsub);
+    });
   }
-  document.getElementById('cal-grid').innerHTML = html;
-
-  ['p','n'].forEach(who => {
-    const cnt = countDay(year,month,day,who);
-    const pct = Math.round(cnt/30*100);
-    document.getElementById(`pct-${who}`).textContent = pct+'%';
-    document.getElementById(`pbar-${who}`).style.width = pct+'%';
-  });
-  document.getElementById('pc-p').className = 'p-card'+(state.person==='p'?' active-p':'');
-  document.getElementById('pc-n').className = 'p-card'+(state.person==='n'?' active-n':'');
 }
 
-function renderSingle() {
-  const {year,month,day,person} = state;
+async function toggle(y,m,d,who,id){
+  setSyncStatus('syncing');
+  const k=cKey(y,m,d,who);
+  const cur=[...(state.cache[k]||[])];
+  const idx=cur.indexOf(id);
+  if(idx>=0) cur.splice(idx,1); else cur.push(id);
+  state.cache[k]=cur;
+  renderAll();
+  const obj={}; cur.forEach(i=>{obj[i]=true;});
+  try{ await set(ref(db,dayPath(y,m,d,who)), Object.keys(obj).length?obj:null); setSyncStatus('online'); }
+  catch(e){ setSyncStatus('offline'); }
+}
+window.toggle=toggle;
+
+function getChecked(y,m,d,who){ return state.cache[cKey(y,m,d,who)]||[]; }
+function countDay(y,m,d,who){ return getChecked(y,m,d,who).length; }
+function pctDay(y,m,d,who){ return Math.round(countDay(y,m,d,who)/30*100); }
+
+/* ── NAV ──────────────────────────────────────────── */
+window.changeMonth=function(dir){
+  state.month+=dir;
+  if(state.month>11){state.month=0;state.year++}
+  if(state.month<0){state.month=11;state.year--}
+  subscribeMonth(state.year,state.month);
+};
+window.setView=function(v){ state.view=v; renderAll(); };
+window.setPerson=function(p){ state.person=p; renderAll(); };
+window.selectDay=function(d){ state.day=d; renderAll(); };
+
+/* ── RENDER HELPERS ───────────────────────────────── */
+function thaiDate(y,m,d){ return `${d} ${THAI_MONTHS[m]} ${y+543}`; }
+function thaiDow(y,m,d){ return 'วัน'+THAI_DAYS_L[new Date(y,m,d).getDay()]; }
+
+function renderCal(){
+  const {year,month,day}=state;
+  document.getElementById('cal-month-label').textContent=`${THAI_MONTHS[month]} ${year+543}`;
+  const first=new Date(year,month,1).getDay(), total=new Date(year,month+1,0).getDate();
+  let html=THAI_DAYS_S.map(d=>`<div class="cal-dn">${d}</div>`).join('');
+  for(let i=0;i<first;i++) html+=`<div class="cal-d empty"></div>`;
+  for(let d=1;d<=total;d++){
+    const isToday=d===TODAY.getDate()&&month===TODAY.getMonth()&&year===TODAY.getFullYear();
+    const isSel=d===day;
+    const cp=countDay(year,month,d,'p'),cn=countDay(year,month,d,'n');
+    const dots=(cp>0?`<div class="dot dot-p"></div>`:'')+( cn>0?`<div class="dot dot-n"></div>`:'');
+    html+=`<div class="cal-d${isSel?' selected':''}${isToday?' today':''}" onclick="selectDay(${d})">
+      <span>${d}</span><div class="dots">${dots}</div></div>`;
+  }
+  document.getElementById('cal-grid').innerHTML=html;
+  ['p','n'].forEach(who=>{
+    const pct=pctDay(year,month,day,who);
+    document.getElementById(`pct-${who}`).textContent=pct+'%';
+    document.getElementById(`pbar-${who}`).style.width=pct+'%';
+  });
+  document.getElementById('pc-p').className='p-card'+(state.person==='p'?' active-p':'');
+  document.getElementById('pc-n').className='p-card'+(state.person==='n'?' active-n':'');
+}
+
+function renderSingle(){
+  const {year,month,day,person}=state;
   document.getElementById('tab-single').className='nav-tab active';
   document.getElementById('tab-compare').className='nav-tab';
+  document.getElementById('tab-summary').className='nav-tab';
   document.getElementById('view-single').style.display='';
   document.getElementById('view-compare').style.display='none';
+  document.getElementById('view-summary').style.display='none';
+  document.getElementById('date-header').style.display='';
+  document.getElementById('date-title').textContent=thaiDate(year,month,day);
+  document.getElementById('date-sub').textContent=thaiDow(year,month,day);
   document.getElementById('btn-p').className='ps-btn'+(person==='p'?' active-p':'');
   document.getElementById('btn-n').className='ps-btn'+(person==='n'?' active-n':'');
 
-  const checked = getChecked(year,month,day,person);
-  const bycat = {};
-  HABITS.forEach(h => { if(!bycat[h.cat]) bycat[h.cat]=[]; bycat[h.cat].push(h); });
-
+  const checked=getChecked(year,month,day,person);
+  const bycat={};
+  HABITS.forEach(h=>{if(!bycat[h.cat])bycat[h.cat]=[];bycat[h.cat].push(h)});
   let html='';
-  Object.entries(CATS).forEach(([cat,info]) => {
+  Object.entries(CATS).forEach(([cat,info])=>{
     if(!bycat[cat]) return;
-    html+=`<div class="cat-block">
-      <div class="cat-label" style="background:${info.bg};color:${info.color}">${info.label}</div>
-      <div class="items-grid">`;
-    bycat[cat].forEach(h => {
-      const done = checked.includes(h.id);
-      const dc = done?(person==='p'?'done-p':'done-n'):'';
-      const cc = done?(person==='p'?'chk-p':'chk-n'):'';
+    html+=`<div class="cat-block"><div class="cat-label" style="background:${info.bg};color:${info.color}">${info.label}</div><div class="items-grid">`;
+    bycat[cat].forEach(h=>{
+      const done=checked.includes(h.id);
+      const dc=done?(person==='p'?'done-p':'done-n'):'';
+      const cc=done?(person==='p'?'chk-p':'chk-n'):'';
       html+=`<div class="habit ${dc}" onclick="toggle(${year},${month},${day},'${person}',${h.id})">
         <div class="chk ${cc}">${done?'✓':''}</div>
-        <span class="habit-text">${h.text}</span>
-      </div>`;
+        <span class="habit-text">${h.text}</span></div>`;
     });
     html+=`</div></div>`;
   });
-  document.getElementById('habits-container').innerHTML = html;
+  document.getElementById('habits-container').innerHTML=html;
 }
 
-function renderCompare() {
-  const {year,month,day} = state;
+function renderCompare(){
+  const {year,month,day}=state;
   document.getElementById('tab-single').className='nav-tab';
   document.getElementById('tab-compare').className='nav-tab active';
+  document.getElementById('tab-summary').className='nav-tab';
   document.getElementById('view-single').style.display='none';
   document.getElementById('view-compare').style.display='';
+  document.getElementById('view-summary').style.display='none';
+  document.getElementById('date-header').style.display='';
+  document.getElementById('date-title').textContent=thaiDate(year,month,day);
+  document.getElementById('date-sub').textContent=thaiDow(year,month,day);
 
-  ['p','n'].forEach(who => {
-    const checked = getChecked(year,month,day,who);
-    const cnt = checked.length;
+  ['p','n'].forEach(who=>{
+    const checked=getChecked(year,month,day,who), cnt=checked.length;
     document.getElementById(`cmp-score-${who}`).textContent=`${cnt} / 30`;
     document.getElementById(`cmp-bar-${who}`).style.width=Math.round(cnt/30*100)+'%';
     let html='';
-    HABITS.forEach(h => {
-      const done = checked.includes(h.id);
-      const dc=done?`done-${who}`:'', cc=done?`chk-${who}`:'';
-      html+=`<div class="cmp-item ${dc}" onclick="toggle(${year},${month},${day},'${who}',${h.id})">
-        <div class="cmp-chk ${cc}">${done?'✓':''}</div>
-        <span class="cmp-text">${h.text}</span>
-      </div>`;
+    HABITS.forEach(h=>{
+      const done=checked.includes(h.id);
+      html+=`<div class="cmp-item ${done?'done-'+who:''}" onclick="toggle(${year},${month},${day},'${who}',${h.id})">
+        <div class="cmp-chk ${done?'chk-'+who:''}">${done?'✓':''}</div>
+        <span class="cmp-text">${h.text}</span></div>`;
     });
     document.getElementById(`cmp-list-${who}`).innerHTML=html;
   });
 }
 
-function renderAll() {
-  const {year,month,day} = state;
-  document.getElementById('date-title').textContent = thaiDate(year,month,day);
-  document.getElementById('date-sub').textContent   = thaiDow(year,month,day);
-  renderCal();
-  if (state.view==='single') renderSingle(); else renderCompare();
+function renderSummary(){
+  const {year,month}=state;
+  document.getElementById('tab-single').className='nav-tab';
+  document.getElementById('tab-compare').className='nav-tab';
+  document.getElementById('tab-summary').className='nav-tab active';
+  document.getElementById('view-single').style.display='none';
+  document.getElementById('view-compare').style.display='none';
+  document.getElementById('view-summary').style.display='';
+  document.getElementById('date-header').style.display='none';
+
+  document.getElementById('sum-title').textContent=`สรุปเดือน${THAI_MONTHS[month]} ${year+543}`;
+
+  const total=new Date(year,month+1,0).getDate();
+  const todayInMonth = (year===TODAY.getFullYear()&&month===TODAY.getMonth()) ? TODAY.getDate() : total;
+
+  // collect data
+  let sumP=0,sumN=0,daysWithDataP=0,daysWithDataN=0,winsP=0,winsN=0,ties=0;
+  const rows=[];
+  for(let d=1;d<=total;d++){
+    const pp=pctDay(year,month,d,'p'), pn=pctDay(year,month,d,'n');
+    const hasP=countDay(year,month,d,'p')>0, hasN=countDay(year,month,d,'n')>0;
+    if(hasP){sumP+=pp;daysWithDataP++}
+    if(hasN){sumN+=pn;daysWithDataN++}
+    const w = (!hasP&&!hasN)?'none': pp>pn?'p': pn>pp?'n':'tie';
+    if(w==='p')winsP++; else if(w==='n')winsN++; else if(w==='tie'&&(hasP||hasN))ties++;
+    rows.push({d,pp,pn,hasP,hasN,w});
+  }
+  const avgP=daysWithDataP?Math.round(sumP/daysWithDataP):0;
+  const avgN=daysWithDataN?Math.round(sumN/daysWithDataN):0;
+  const bestDayP=rows.filter(r=>r.hasP).reduce((a,b)=>b.pp>a.pp?b:a,{pp:-1,d:'-'});
+  const bestDayN=rows.filter(r=>r.hasN).reduce((a,b)=>b.pn>a.pn?b:a,{pn:-1,d:'-'});
+
+  // STAT CARDS
+  document.getElementById('stat-cards').innerHTML=`
+    <div class="stat-card">
+      <div class="stat-card-label">เฉลี่ยต่อวัน</div>
+      <div class="stat-card-row">
+        <div><div class="stat-who">ปังปอนด์</div><div class="stat-val col-p">${avgP}%</div></div>
+        <div><div class="stat-who">นานา</div><div class="stat-val col-n">${avgN}%</div></div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">วันที่ดีที่สุด</div>
+      <div class="stat-card-row">
+        <div><div class="stat-who">ปังปอนด์</div><div class="stat-val col-p">${bestDayP.pp>=0?bestDayP.d:'-'}</div></div>
+        <div><div class="stat-who">นานา</div><div class="stat-val col-n">${bestDayN.pn>=0?bestDayN.d:'-'}</div></div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">วันที่บันทึก</div>
+      <div class="stat-card-row">
+        <div><div class="stat-who">ปังปอนด์</div><div class="stat-val col-p">${daysWithDataP}</div></div>
+        <div><div class="stat-who">นานา</div><div class="stat-val col-n">${daysWithDataN}</div></div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">จำนวนวันที่ชนะ</div>
+      <div class="stat-card-row">
+        <div><div class="stat-who">ปังปอนด์</div><div class="stat-val col-p">${winsP}</div></div>
+        <div><div class="stat-who">นานา</div><div class="stat-val col-n">${winsN}</div></div>
+      </div>
+    </div>`;
+
+  // BAR CHART (SVG)
+  const W=Math.max(total*22+60, 600), H=160, padL=36, padB=24, padT=10;
+  const chartH=H-padB-padT, barW=8, gap=14;
+  const scaleY=v=>(chartH - (v/100)*chartH) + padT;
+  let svgLines='', svgBars='', svgLabels='';
+  // Y axis gridlines
+  [0,25,50,75,100].forEach(v=>{
+    const y=scaleY(v);
+    svgLines+=`<line x1="${padL}" x2="${W}" y1="${y}" y2="${y}" stroke="#E5E5E5" stroke-width="1"/>`;
+    svgLines+=`<text x="${padL-4}" y="${y+4}" text-anchor="end" fill="#BBB" font-size="10">${v}</text>`;
+  });
+  rows.forEach(({d,pp,pn,hasP,hasN},i)=>{
+    const x=padL+i*(barW*2+gap+4);
+    const yP=scaleY(pp), yN=scaleY(pn);
+    const hP=chartH-(pp/100)*chartH, hN=chartH-(pn/100)*chartH;
+    const isToday=d===TODAY.getDate()&&month===TODAY.getMonth()&&year===TODAY.getFullYear();
+    svgBars+=`<rect x="${x}" y="${yP}" width="${barW}" height="${hP}" rx="2" fill="${hasP?'#7C5CBF':'#E5E5E5'}" opacity="${isToday?1:.85}"/>`;
+    svgBars+=`<rect x="${x+barW+2}" y="${yN}" width="${barW}" height="${hN}" rx="2" fill="${hasN?'#D45F7F':'#E5E5E5'}" opacity="${isToday?1:.85}"/>`;
+    if(d===1||d%5===0||d===total){
+      svgLabels+=`<text x="${x+barW}" y="${H-6}" text-anchor="middle" fill="#AAA" font-size="10">${d}</text>`;
+    }
+  });
+  document.getElementById('chart-svg-wrap').innerHTML=
+    `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;min-width:${W}px;display:block">
+      ${svgLines}${svgBars}${svgLabels}
+    </svg>`;
+
+  // TABLE
+  let tbody='';
+  if(!rows.some(r=>r.hasP||r.hasN)){
+    tbody=`<tr class="no-data-row"><td colspan="5">ยังไม่มีข้อมูลในเดือนนี้</td></tr>`;
+  } else {
+    rows.forEach(({d,pp,pn,hasP,hasN,w})=>{
+      if(!hasP&&!hasN) return;
+      const isToday=d===TODAY.getDate()&&month===TODAY.getMonth()&&year===TODAY.getFullYear();
+      const dow=THAI_DAYS_S[new Date(year,month,d).getDay()];
+      const winBadge = w==='p'?`<span class="winner-badge win-p">ปังปอนด์</span>`:
+                       w==='n'?`<span class="winner-badge win-n">นานา</span>`:
+                       w==='tie'?`<span class="winner-badge win-tie">เสมอ</span>`:``;
+      const pillP=hasP?`<span class="pct-pill col-p">${pp}%</span>`:`<span class="pct-pill empty">-</span>`;
+      const pillN=hasN?`<span class="pct-pill col-n">${pn}%</span>`:`<span class="pct-pill empty">-</span>`;
+      tbody+=`<tr${isToday?' class="is-today"':''}>
+        <td><span class="day-num">${d}</span></td>
+        <td><span class="day-dow">${dow}</span></td>
+        <td><div class="bar-cell">${pillP}<div class="mini-bar-wrap"><div class="mini-bar mini-bar-p" style="width:${pp}%"></div></div></div></td>
+        <td><div class="bar-cell">${pillN}<div class="mini-bar-wrap"><div class="mini-bar mini-bar-n" style="width:${pn}%"></div></div></div></td>
+        <td>${winBadge}</td>
+      </tr>`;
+    });
+  }
+  document.getElementById('day-tbody').innerHTML=tbody;
 }
 
-// ── INIT ──────────────────────────────────────────────
-// Subscribe to today's data, then hide loading screen
-subscribeDay(state.year, state.month, state.day);
+function renderAll(){
+  renderCal();
+  if(state.view==='single') renderSingle();
+  else if(state.view==='compare') renderCompare();
+  else renderSummary();
+}
+
+/* ── INIT ─────────────────────────────────────────── */
+subscribeMonth(state.year, state.month);
 setSyncStatus('online');
 renderAll();
-document.getElementById('loading-overlay').style.opacity = '0';
-setTimeout(() => { document.getElementById('loading-overlay').style.display='none'; }, 350);
+document.getElementById('loading-overlay').style.opacity='0';
+setTimeout(()=>{ document.getElementById('loading-overlay').style.display='none'; },350);
 </script>
 </body>
 </html>
