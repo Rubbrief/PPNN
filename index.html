@@ -11,10 +11,8 @@
   :root {
     --pp: #7C5CBF;
     --pp-light: #EDE8F8;
-    --pp-mid: #A98FD6;
     --nn: #D45F7F;
     --nn-light: #FAE8EE;
-    --nn-mid: #E495AB;
     --bg: #F7F6F3;
     --surface: #FFFFFF;
     --border: rgba(0,0,0,0.08);
@@ -24,313 +22,208 @@
     --text-3: #999;
     --radius: 12px;
     --radius-sm: 8px;
-    --cat-food: #2E7D5E;
-    --cat-food-bg: #E5F4EE;
-    --cat-sleep: #5A4A9E;
-    --cat-sleep-bg: #EEEAF8;
-    --cat-move: #3B6E2A;
-    --cat-move-bg: #EBF5E5;
-    --cat-mind: #8A5A10;
-    --cat-mind-bg: #FBF0DE;
-    --cat-social: #A02060;
-    --cat-social-bg: #FAE5EF;
+    --cat-food: #2E7D5E; --cat-food-bg: #E5F4EE;
+    --cat-sleep: #5A4A9E; --cat-sleep-bg: #EEEAF8;
+    --cat-move: #3B6E2A; --cat-move-bg: #EBF5E5;
+    --cat-mind: #8A5A10; --cat-mind-bg: #FBF0DE;
+    --cat-social: #A02060; --cat-social-bg: #FAE5EF;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     font-family: 'Sarabun', 'Noto Sans Thai', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 15px;
-    line-height: 1.6;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; font-size: 15px; line-height: 1.6;
   }
 
-  /* ── TOP BAR ── */
+  /* TOPBAR */
   .topbar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 56px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 0 24px; display: flex; align-items: center;
+    justify-content: space-between; height: 56px;
+    position: sticky; top: 0; z-index: 100;
   }
-  .logo {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+  .logo { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
   .logo-dot {
     width: 8px; height: 8px; border-radius: 50%;
     background: linear-gradient(135deg, var(--pp), var(--nn));
-    display: inline-block;
   }
   .nav-tabs {
-    display: flex;
-    gap: 4px;
-    background: var(--bg);
-    border-radius: var(--radius-sm);
-    padding: 3px;
+    display: flex; gap: 4px; background: var(--bg);
+    border-radius: var(--radius-sm); padding: 3px;
   }
   .nav-tab {
-    padding: 5px 16px;
-    border-radius: 6px;
-    border: none;
-    background: transparent;
-    color: var(--text-2);
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 400;
-    transition: all 0.15s;
+    padding: 5px 16px; border-radius: 6px; border: none;
+    background: transparent; color: var(--text-2); cursor: pointer;
+    font-family: inherit; font-size: 14px; font-weight: 400; transition: all 0.15s;
   }
   .nav-tab.active {
-    background: var(--surface);
-    color: var(--text);
-    font-weight: 500;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    background: var(--surface); color: var(--text);
+    font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   }
 
-  /* ── LAYOUT ── */
+  /* SYNC STATUS */
+  .sync-badge {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text-3); padding: 4px 10px;
+    border-radius: 20px; border: 1px solid var(--border);
+  }
+  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; }
+  .sync-dot.online { background: #4CAF50; }
+  .sync-dot.syncing { background: #FF9800; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* LAYOUT */
   .main {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 24px 20px;
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 20px;
-    align-items: start;
+    max-width: 960px; margin: 0 auto; padding: 24px 20px;
+    display: grid; grid-template-columns: 280px 1fr;
+    gap: 20px; align-items: start;
   }
-
-  /* ── SIDEBAR: CALENDAR ── */
-  .sidebar {
-    position: sticky;
-    top: 76px;
-  }
-
+  .sidebar { position: sticky; top: 76px; }
   .card {
-    background: var(--surface);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    overflow: hidden;
+    background: var(--surface); border-radius: var(--radius);
+    border: 1px solid var(--border); overflow: hidden;
   }
 
+  /* CALENDAR */
   .cal-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: flex; align-items: center; justify-content: space-between;
     padding: 14px 16px 10px;
   }
-  .cal-month {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text);
-  }
+  .cal-month { font-size: 15px; font-weight: 600; }
   .cal-nav {
-    width: 28px; height: 28px;
-    border-radius: 6px;
-    border: 1px solid var(--border-mid);
-    background: none;
-    cursor: pointer;
+    width: 28px; height: 28px; border-radius: 6px;
+    border: 1px solid var(--border-mid); background: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    color: var(--text-2);
-    font-size: 14px;
-    transition: background 0.1s;
+    color: var(--text-2); font-size: 16px; transition: background 0.1s;
   }
   .cal-nav:hover { background: var(--bg); }
-
   .cal-grid {
-    display: grid;
-    grid-template-columns: repeat(7,1fr);
-    padding: 0 10px 10px;
-    gap: 3px;
+    display: grid; grid-template-columns: repeat(7,1fr);
+    padding: 0 10px 10px; gap: 3px;
   }
-  .cal-dn {
-    text-align: center;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text-3);
-    padding: 4px 0 6px;
-  }
+  .cal-dn { text-align: center; font-size: 11px; font-weight: 500; color: var(--text-3); padding: 4px 0 6px; }
   .cal-d {
-    aspect-ratio: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 13px;
-    color: var(--text-2);
-    border: 1.5px solid transparent;
-    transition: all 0.12s;
-    gap: 2px;
+    aspect-ratio: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; border-radius: 8px;
+    cursor: pointer; font-size: 13px; color: var(--text-2);
+    border: 1.5px solid transparent; transition: all 0.12s; gap: 2px;
   }
   .cal-d:hover { background: var(--bg); color: var(--text); }
   .cal-d.today { background: var(--bg); font-weight: 600; color: var(--text); }
   .cal-d.selected { border-color: var(--pp); color: var(--pp); font-weight: 600; background: var(--pp-light); }
-  .cal-d.empty { cursor: default; }
-  .cal-d.empty:hover { background: none; }
+  .cal-d.empty { cursor: default; pointer-events: none; }
   .dots { display: flex; gap: 2px; }
   .dot { width: 4px; height: 4px; border-radius: 50%; }
-  .dot-p { background: var(--pp); }
-  .dot-n { background: var(--nn); }
+  .dot-p { background: var(--pp); } .dot-n { background: var(--nn); }
 
-  /* person strip */
+  /* PERSON STRIP */
   .person-strip {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 12px;
-    gap: 8px;
-    border-top: 1px solid var(--border);
-    margin-top: 4px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    padding: 12px; gap: 8px; border-top: 1px solid var(--border);
   }
   .p-card {
-    border-radius: var(--radius-sm);
-    border: 1.5px solid transparent;
-    padding: 10px;
-    cursor: pointer;
-    transition: all 0.15s;
-    background: var(--bg);
+    border-radius: var(--radius-sm); border: 1.5px solid transparent;
+    padding: 10px; cursor: pointer; transition: all 0.15s; background: var(--bg);
   }
   .p-card:hover { border-color: var(--border-mid); }
   .p-card.active-p { background: var(--pp-light); border-color: var(--pp); }
   .p-card.active-n { background: var(--nn-light); border-color: var(--nn); }
-  .p-name { font-size: 13px; font-weight: 500; color: var(--text-2); margin-top: 4px; }
-  .p-name.active { color: var(--text); }
   .p-pct { font-size: 20px; font-weight: 600; }
-  .pct-p { color: var(--pp); }
-  .pct-n { color: var(--nn); }
+  .pct-p { color: var(--pp); } .pct-n { color: var(--nn); }
+  .p-name { font-size: 13px; font-weight: 500; color: var(--text-2); margin-top: 4px; }
   .p-bar { height: 3px; border-radius: 2px; background: rgba(0,0,0,0.08); margin-top: 6px; overflow: hidden; }
   .p-bar-fill { height: 100%; border-radius: 2px; transition: width 0.4s; }
-  .fill-p { background: var(--pp); }
-  .fill-n { background: var(--nn); }
+  .fill-p { background: var(--pp); } .fill-n { background: var(--nn); }
 
-  /* ── MAIN CONTENT ── */
-  .content {}
-
-  /* date header */
-  .date-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-  }
-  .date-title { font-size: 20px; font-weight: 600; color: var(--text); }
+  /* CONTENT */
+  .date-header { margin-bottom: 16px; }
+  .date-title { font-size: 20px; font-weight: 600; }
   .date-sub { font-size: 13px; color: var(--text-3); }
 
-  /* single view: category sections */
+  /* PERSON SWITCHER (single view) */
+  .person-switcher { display: flex; gap: 8px; margin-bottom: 16px; }
+  .ps-btn {
+    padding: 7px 20px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border-mid); background: var(--surface);
+    color: var(--text-2); cursor: pointer; font-family: inherit;
+    font-size: 14px; font-weight: 500; transition: all 0.15s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .ps-btn:hover { border-color: var(--border-mid); background: var(--bg); }
+  .ps-btn.active-p { background: var(--pp-light); border-color: var(--pp); color: var(--pp); }
+  .ps-btn.active-n { background: var(--nn-light); border-color: var(--nn); color: var(--nn); }
+  .ps-avatar {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600;
+  }
+  .av-p { background: var(--pp); color: #fff; }
+  .av-n { background: var(--nn); color: #fff; }
+
+  /* HABITS */
   .cat-block { margin-bottom: 20px; }
   .cat-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 20px;
-    margin-bottom: 8px;
-    letter-spacing: 0.02em;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 600; padding: 4px 10px;
+    border-radius: 20px; margin-bottom: 8px; letter-spacing: 0.02em;
   }
-  .items-grid { display: flex; flex-direction: column; gap: 1px; }
-
   .habit {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 10px 14px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: background 0.1s;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    margin-bottom: 4px;
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 14px; border-radius: var(--radius-sm); cursor: pointer;
+    transition: all 0.12s; background: var(--surface);
+    border: 1px solid var(--border); margin-bottom: 4px;
   }
   .habit:hover { border-color: var(--border-mid); }
-  .habit.done-p { background: var(--pp-light); border-color: rgba(124,92,191,0.25); }
-  .habit.done-n { background: var(--nn-light); border-color: rgba(212,95,127,0.25); }
-
+  .habit.done-p { background: var(--pp-light); border-color: rgba(124,92,191,0.3); }
+  .habit.done-n { background: var(--nn-light); border-color: rgba(212,95,127,0.3); }
   .chk {
-    width: 20px; height: 20px;
-    border-radius: 5px;
-    border: 1.5px solid var(--border-mid);
-    flex-shrink: 0;
-    margin-top: 1px;
+    width: 20px; height: 20px; border-radius: 5px;
+    border: 1.5px solid var(--border-mid); flex-shrink: 0; margin-top: 1px;
     display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
-    font-size: 12px;
-    color: #fff;
+    transition: all 0.15s; font-size: 13px; color: #fff; font-weight: 600;
   }
   .chk.chk-p { background: var(--pp); border-color: var(--pp); }
   .chk.chk-n { background: var(--nn); border-color: var(--nn); }
-  .habit-text {
-    font-size: 14px;
-    color: var(--text);
-    line-height: 1.5;
-    flex: 1;
-  }
+  .habit-text { font-size: 14px; line-height: 1.5; flex: 1; }
   .habit.done-p .habit-text { color: var(--pp); }
   .habit.done-n .habit-text { color: var(--nn); }
 
-  /* ── COMPARE VIEW ── */
-  .compare-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
+  /* COMPARE VIEW */
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .cmp-panel {
-    background: var(--surface);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    overflow: hidden;
+    background: var(--surface); border-radius: var(--radius);
+    border: 1px solid var(--border); overflow: hidden;
   }
   .cmp-head {
-    padding: 14px 16px 12px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    padding: 14px 16px 12px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
   }
   .avatar {
-    width: 32px; height: 32px;
-    border-radius: 50%;
+    width: 32px; height: 32px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-size: 13px; font-weight: 600;
   }
-  .av-p { background: var(--pp-light); color: var(--pp); }
-  .av-n { background: var(--nn-light); color: var(--nn); }
   .cmp-name { font-size: 15px; font-weight: 600; }
   .cmp-score { margin-left: auto; font-size: 13px; color: var(--text-3); }
   .cmp-bar-wrap { height: 4px; background: var(--bg); }
   .cmp-bar { height: 100%; transition: width 0.4s; }
-  .bar-p { background: var(--pp); }
-  .bar-n { background: var(--nn); }
-  .cmp-items { padding: 8px; display: flex; flex-direction: column; gap: 2px; max-height: 70vh; overflow-y: auto; }
+  .bar-p { background: var(--pp); } .bar-n { background: var(--nn); }
+  .cmp-items {
+    padding: 8px; display: flex; flex-direction: column;
+    gap: 2px; max-height: 68vh; overflow-y: auto;
+  }
   .cmp-item {
     display: flex; align-items: flex-start; gap: 8px;
-    padding: 7px 8px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.1s;
+    padding: 7px 8px; border-radius: 6px; cursor: pointer; transition: background 0.1s;
   }
   .cmp-item:hover { background: var(--bg); }
   .cmp-item.done-p { background: var(--pp-light); }
   .cmp-item.done-n { background: var(--nn-light); }
   .cmp-chk {
-    width: 16px; height: 16px;
-    border-radius: 4px;
-    border: 1.5px solid var(--border-mid);
-    flex-shrink: 0; margin-top: 2px;
+    width: 16px; height: 16px; border-radius: 4px;
+    border: 1.5px solid var(--border-mid); flex-shrink: 0; margin-top: 2px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 10px; color: #fff;
+    font-size: 10px; font-weight: 700; color: #fff;
   }
   .cmp-chk.chk-p { background: var(--pp); border-color: var(--pp); }
   .cmp-chk.chk-n { background: var(--nn); border-color: var(--nn); }
@@ -338,17 +231,36 @@
   .cmp-item.done-p .cmp-text { color: var(--pp); }
   .cmp-item.done-n .cmp-text { color: var(--nn); }
 
-  /* ── RESPONSIVE ── */
+  /* LOADING OVERLAY */
+  .loading-overlay {
+    position: fixed; inset: 0; background: var(--bg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 12px; z-index: 999; transition: opacity 0.3s;
+  }
+  .loading-spinner {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 3px solid var(--border-mid); border-top-color: var(--pp);
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 14px; color: var(--text-3); }
+
   @media (max-width: 700px) {
     .main { grid-template-columns: 1fr; padding: 16px; }
     .sidebar { position: static; }
     .compare-grid { grid-template-columns: 1fr; }
-    .topbar { padding: 0 16px; }
-    .nav-tab { padding: 5px 10px; font-size: 13px; }
+    .topbar { padding: 0 16px; gap: 8px; }
+    .sync-badge span { display: none; }
   }
 </style>
 </head>
 <body>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">กำลังเชื่อมต่อ Firebase...</div>
+</div>
 
 <nav class="topbar">
   <div class="logo">
@@ -359,10 +271,13 @@
     <button class="nav-tab active" id="tab-single" onclick="setView('single')">บันทึก</button>
     <button class="nav-tab" id="tab-compare" onclick="setView('compare')">เปรียบเทียบ</button>
   </div>
+  <div class="sync-badge">
+    <div class="sync-dot" id="sync-dot"></div>
+    <span id="sync-text">กำลังเชื่อมต่อ...</span>
+  </div>
 </nav>
 
 <div class="main">
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="card">
       <div class="cal-head">
@@ -371,40 +286,44 @@
         <button class="cal-nav" onclick="changeMonth(1)">&#8250;</button>
       </div>
       <div class="cal-grid" id="cal-grid"></div>
-
       <div class="person-strip">
         <div class="p-card active-p" id="pc-p" onclick="setPerson('p')">
           <div class="p-pct pct-p" id="pct-p">0%</div>
-          <div class="p-name active" id="pname-p">ปังปอนด์</div>
+          <div class="p-name">ปังปอนด์</div>
           <div class="p-bar"><div class="p-bar-fill fill-p" id="pbar-p" style="width:0%"></div></div>
         </div>
         <div class="p-card" id="pc-n" onclick="setPerson('n')">
           <div class="p-pct pct-n" id="pct-n">0%</div>
-          <div class="p-name" id="pname-n">นานา</div>
+          <div class="p-name">นานา</div>
           <div class="p-bar"><div class="p-bar-fill fill-n" id="pbar-n" style="width:0%"></div></div>
         </div>
       </div>
     </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
   <main class="content">
     <div class="date-header">
-      <div>
-        <div class="date-title" id="date-title"></div>
-        <div class="date-sub" id="date-sub"></div>
-      </div>
+      <div class="date-title" id="date-title"></div>
+      <div class="date-sub" id="date-sub"></div>
     </div>
 
-    <!-- SINGLE VIEW -->
-    <div id="view-single"></div>
+    <div id="view-single">
+      <div class="person-switcher">
+        <button class="ps-btn active-p" id="btn-p" onclick="setPerson('p')">
+          <div class="ps-avatar av-p">ป</div> ปังปอนด์
+        </button>
+        <button class="ps-btn" id="btn-n" onclick="setPerson('n')">
+          <div class="ps-avatar av-n">น</div> นานา
+        </button>
+      </div>
+      <div id="habits-container"></div>
+    </div>
 
-    <!-- COMPARE VIEW -->
     <div id="view-compare" style="display:none">
       <div class="compare-grid">
         <div class="cmp-panel">
           <div class="cmp-head">
-            <div class="avatar av-p">ป</div>
+            <div class="avatar av-p" style="background:var(--pp-light);color:var(--pp)">ป</div>
             <span class="cmp-name" style="color:var(--pp)">ปังปอนด์</span>
             <span class="cmp-score" id="cmp-score-p">0 / 30</span>
           </div>
@@ -413,7 +332,7 @@
         </div>
         <div class="cmp-panel">
           <div class="cmp-head">
-            <div class="avatar av-n">น</div>
+            <div class="avatar av-n" style="background:var(--nn-light);color:var(--nn)">น</div>
             <span class="cmp-name" style="color:var(--nn)">นานา</span>
             <span class="cmp-score" id="cmp-score-n">0 / 30</span>
           </div>
@@ -425,7 +344,25 @@
   </main>
 </div>
 
-<script>
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA_cGQ2Bc_lc1K-JXOT2j8Xj4vcxej0ALg",
+  authDomain: "daily-habits-8e97b.firebaseapp.com",
+  databaseURL: "https://daily-habits-8e97b-default-rtdb.firebaseio.com",
+  projectId: "daily-habits-8e97b",
+  storageBucket: "daily-habits-8e97b.firebasestorage.app",
+  messagingSenderId: "290301294122",
+  appId: "1:290301294122:web:15c782610d558433507553"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ── DATA ──────────────────────────────────────────────
 const HABITS = [
   {id:0,text:'ดื่มน้ำเปล่าให้ได้วันละ 2-3 ลิตร',cat:'food'},
   {id:1,text:'กินผักทุกวัน อย่างน้อย 2 มื้อ',cat:'food'},
@@ -460,186 +397,203 @@ const HABITS = [
 ];
 
 const CATS = {
-  food:  {label:'🥗 โภชนาการ',   bg:'var(--cat-food-bg)',  color:'var(--cat-food)'},
-  sleep: {label:'😴 การนอนหลับ', bg:'var(--cat-sleep-bg)', color:'var(--cat-sleep)'},
-  move:  {label:'🏃 การเคลื่อนไหว', bg:'var(--cat-move-bg)', color:'var(--cat-move)'},
-  mind:  {label:'🧠 จิตใจ & สมาธิ', bg:'var(--cat-mind-bg)', color:'var(--cat-mind)'},
-  social:{label:'🤝 สังคม',       bg:'var(--cat-social-bg)',color:'var(--cat-social)'},
+  food:  {label:'🥗 โภชนาการ',      bg:'var(--cat-food-bg)',   color:'var(--cat-food)'},
+  sleep: {label:'😴 การนอนหลับ',    bg:'var(--cat-sleep-bg)',  color:'var(--cat-sleep)'},
+  move:  {label:'🏃 การเคลื่อนไหว', bg:'var(--cat-move-bg)',   color:'var(--cat-move)'},
+  mind:  {label:'🧠 จิตใจ & สมาธิ', bg:'var(--cat-mind-bg)',   color:'var(--cat-mind)'},
+  social:{label:'🤝 สังคม',         bg:'var(--cat-social-bg)', color:'var(--cat-social)'},
 };
 
 const THAI_MONTHS = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
 const THAI_DAYS_SHORT = ['อา','จ','อ','พ','พฤ','ศ','ส'];
-const THAI_DAYS_LONG = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+const THAI_DAYS_LONG  = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
 
 const TODAY = new Date();
 let state = {
-  year: TODAY.getFullYear(),
-  month: TODAY.getMonth(),
-  day: TODAY.getDate(),
-  person: 'p',
-  view: 'single',
-  data: {}
+  year: TODAY.getFullYear(), month: TODAY.getMonth(), day: TODAY.getDate(),
+  person: 'p', view: 'single',
+  cache: {}   // cache[dbKey] = array of habit ids
 };
 
-try { state.data = JSON.parse(localStorage.getItem('dhab_v1') || '{}'); } catch(e){}
-
-function save() { try { localStorage.setItem('dhab_v1', JSON.stringify(state.data)); } catch(e){} }
-
-function key(y, m, d, who) {
-  return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}-${who}`;
+// ── FIREBASE HELPERS ──────────────────────────────────
+function dbKey(y, m, d, who) {
+  return `habits/${y}_${String(m+1).padStart(2,'0')}_${String(d).padStart(2,'0')}/${who}`;
 }
+
+function setSyncStatus(status) {
+  const dot  = document.getElementById('sync-dot');
+  const text = document.getElementById('sync-text');
+  if (status === 'online')  { dot.className='sync-dot online'; text.textContent='ซิงค์แล้ว'; }
+  if (status === 'syncing') { dot.className='sync-dot syncing'; text.textContent='กำลังบันทึก...'; }
+  if (status === 'offline') { dot.className='sync-dot'; text.textContent='ออฟไลน์'; }
+}
+
+// Subscribe to a day's data for BOTH persons — re-render on any change
+let unsubscribers = [];
+function subscribeDay(y, m, d) {
+  unsubscribers.forEach(u => u());
+  unsubscribers = [];
+  ['p','n'].forEach(who => {
+    const r = ref(db, dbKey(y,m,d,who));
+    const unsub = onValue(r, snap => {
+      const val = snap.val();
+      const cacheKey = `${y}_${m}_${d}_${who}`;
+      state.cache[cacheKey] = val ? Object.keys(val).map(Number) : [];
+      renderAll();
+    }, err => { setSyncStatus('offline'); });
+    unsubscribers.push(() => {}); // onValue doesn't return unsubscribe in compat mode — track refs instead
+  });
+}
+
+async function toggle(y, m, d, who, id) {
+  setSyncStatus('syncing');
+  const cacheKey = `${y}_${m}_${d}_${who}`;
+  const current = [...(state.cache[cacheKey] || [])];
+  const idx = current.indexOf(id);
+  if (idx >= 0) current.splice(idx,1); else current.push(id);
+  state.cache[cacheKey] = current;
+
+  // Optimistic render
+  renderAll();
+
+  // Write to Firebase: store as object {0:true, 5:true, ...}
+  const r = ref(db, dbKey(y,m,d,who));
+  const obj = {};
+  current.forEach(i => { obj[i] = true; });
+  try {
+    await set(r, Object.keys(obj).length ? obj : null);
+    setSyncStatus('online');
+  } catch(e) { setSyncStatus('offline'); }
+}
+
+// Expose toggle globally for onclick handlers
+window.toggle = toggle;
 
 function getChecked(y, m, d, who) {
-  return state.data[key(y,m,d,who)] || [];
+  return state.cache[`${y}_${m}_${d}_${who}`] || [];
 }
+function countDay(y, m, d, who) { return getChecked(y,m,d,who).length; }
 
-function isChecked(y, m, d, who, id) {
-  return getChecked(y,m,d,who).includes(id);
-}
-
-function toggle(y, m, d, who, id) {
-  const k = key(y,m,d,who);
-  if (!state.data[k]) state.data[k] = [];
-  const idx = state.data[k].indexOf(id);
-  if (idx >= 0) state.data[k].splice(idx,1);
-  else state.data[k].push(id);
-  save();
-  render();
-}
-
-function countDay(y, m, d, who) {
-  return getChecked(y,m,d,who).length;
-}
-
-function changeMonth(dir) {
+// ── NAV ───────────────────────────────────────────────
+window.changeMonth = function(dir) {
   state.month += dir;
   if (state.month > 11) { state.month = 0; state.year++; }
   if (state.month < 0)  { state.month = 11; state.year--; }
-  render();
-}
+  renderAll();
+};
+window.setView = function(v) { state.view = v; renderAll(); };
+window.setPerson = function(p) { state.person = p; renderAll(); };
+window.selectDay = function(d) {
+  state.day = d;
+  subscribeDay(state.year, state.month, d);
+};
 
-function setView(v) { state.view = v; render(); }
-function setPerson(p) { state.person = p; render(); }
+// ── RENDER ────────────────────────────────────────────
+function thaiDate(y,m,d) { return `${d} ${THAI_MONTHS[m]} ${y+543}`; }
+function thaiDow(y,m,d)  { return 'วัน' + THAI_DAYS_LONG[new Date(y,m,d).getDay()]; }
 
 function renderCal() {
-  const {year, month, day} = state;
-  document.getElementById('cal-month-label').textContent =
-    `${THAI_MONTHS[month]} ${year + 543}`;
-
-  const first = new Date(year, month, 1).getDay();
-  const total = new Date(year, month+1, 0).getDate();
-  let html = THAI_DAYS_SHORT.map(d => `<div class="cal-dn">${d}</div>`).join('');
-  for (let i = 0; i < first; i++) html += `<div class="cal-d empty"></div>`;
-
-  for (let d = 1; d <= total; d++) {
-    const isToday = d === TODAY.getDate() && month === TODAY.getMonth() && year === TODAY.getFullYear();
-    const isSel = d === day;
-    const cp = countDay(year,month,d,'p');
-    const cn = countDay(year,month,d,'n');
-    const dots = (cp > 0 ? `<div class="dot dot-p"></div>` : '') +
-                 (cn > 0 ? `<div class="dot dot-n"></div>` : '');
-    html += `<div class="cal-d${isSel?' selected':''}${isToday?' today':''}" onclick="selectDay(${d})">
-      <span>${d}</span>
-      <div class="dots">${dots}</div>
+  const {year,month,day} = state;
+  document.getElementById('cal-month-label').textContent = `${THAI_MONTHS[month]} ${year+543}`;
+  const first = new Date(year,month,1).getDay();
+  const total = new Date(year,month+1,0).getDate();
+  let html = THAI_DAYS_SHORT.map(d=>`<div class="cal-dn">${d}</div>`).join('');
+  for (let i=0;i<first;i++) html+=`<div class="cal-d empty"></div>`;
+  for (let d=1;d<=total;d++) {
+    const isToday = d===TODAY.getDate()&&month===TODAY.getMonth()&&year===TODAY.getFullYear();
+    const isSel   = d===day;
+    const cp = countDay(year,month,d,'p'), cn = countDay(year,month,d,'n');
+    const dots = (cp>0?`<div class="dot dot-p"></div>`:'')+
+                 (cn>0?`<div class="dot dot-n"></div>`:'');
+    html+=`<div class="cal-d${isSel?' selected':''}${isToday?' today':''}" onclick="selectDay(${d})">
+      <span>${d}</span><div class="dots">${dots}</div>
     </div>`;
   }
   document.getElementById('cal-grid').innerHTML = html;
 
-  // person strip scores for selected day
   ['p','n'].forEach(who => {
-    const cnt = countDay(year, month, day, who);
-    const pct = Math.round(cnt / 30 * 100);
-    document.getElementById(`pct-${who}`).textContent = pct + '%';
-    document.getElementById(`pbar-${who}`).style.width = pct + '%';
+    const cnt = countDay(year,month,day,who);
+    const pct = Math.round(cnt/30*100);
+    document.getElementById(`pct-${who}`).textContent = pct+'%';
+    document.getElementById(`pbar-${who}`).style.width = pct+'%';
   });
-
-  // active person card
-  document.getElementById('pc-p').className = 'p-card' + (state.person === 'p' ? ' active-p' : '');
-  document.getElementById('pc-n').className = 'p-card' + (state.person === 'n' ? ' active-n' : '');
-}
-
-function selectDay(d) { state.day = d; render(); }
-
-function thaiDate(y, m, d) {
-  const dow = new Date(y,m,d).getDay();
-  return `${d} ${THAI_MONTHS[m]} ${y+543}`;
-}
-
-function thaiDayOfWeek(y, m, d) {
-  return 'วัน' + THAI_DAYS_LONG[new Date(y,m,d).getDay()];
+  document.getElementById('pc-p').className = 'p-card'+(state.person==='p'?' active-p':'');
+  document.getElementById('pc-n').className = 'p-card'+(state.person==='n'?' active-n':'');
 }
 
 function renderSingle() {
-  const {year, month, day, person} = state;
-  document.getElementById('date-title').textContent = thaiDate(year, month, day);
-  document.getElementById('date-sub').textContent = thaiDayOfWeek(year, month, day);
+  const {year,month,day,person} = state;
+  document.getElementById('tab-single').className='nav-tab active';
+  document.getElementById('tab-compare').className='nav-tab';
+  document.getElementById('view-single').style.display='';
+  document.getElementById('view-compare').style.display='none';
+  document.getElementById('btn-p').className='ps-btn'+(person==='p'?' active-p':'');
+  document.getElementById('btn-n').className='ps-btn'+(person==='n'?' active-n':'');
 
-  const checked = getChecked(year, month, day, person);
+  const checked = getChecked(year,month,day,person);
   const bycat = {};
-  HABITS.forEach(h => { if (!bycat[h.cat]) bycat[h.cat] = []; bycat[h.cat].push(h); });
+  HABITS.forEach(h => { if(!bycat[h.cat]) bycat[h.cat]=[]; bycat[h.cat].push(h); });
 
-  let html = '';
-  Object.entries(CATS).forEach(([cat, info]) => {
-    if (!bycat[cat]) return;
-    html += `<div class="cat-block">
+  let html='';
+  Object.entries(CATS).forEach(([cat,info]) => {
+    if(!bycat[cat]) return;
+    html+=`<div class="cat-block">
       <div class="cat-label" style="background:${info.bg};color:${info.color}">${info.label}</div>
       <div class="items-grid">`;
     bycat[cat].forEach(h => {
       const done = checked.includes(h.id);
-      const doneClass = done ? (person === 'p' ? 'done-p' : 'done-n') : '';
-      const chkClass = done ? (person === 'p' ? 'chk-p' : 'chk-n') : '';
-      html += `<div class="habit ${doneClass}" onclick="toggle(${year},${month},${day},'${person}',${h.id})">
-        <div class="chk ${chkClass}">${done ? '✓' : ''}</div>
+      const dc = done?(person==='p'?'done-p':'done-n'):'';
+      const cc = done?(person==='p'?'chk-p':'chk-n'):'';
+      html+=`<div class="habit ${dc}" onclick="toggle(${year},${month},${day},'${person}',${h.id})">
+        <div class="chk ${cc}">${done?'✓':''}</div>
         <span class="habit-text">${h.text}</span>
       </div>`;
     });
-    html += `</div></div>`;
+    html+=`</div></div>`;
   });
-
-  document.getElementById('view-single').innerHTML = html;
-  document.getElementById('view-single').style.display = '';
-  document.getElementById('view-compare').style.display = 'none';
-  document.getElementById('tab-single').className = 'nav-tab active';
-  document.getElementById('tab-compare').className = 'nav-tab';
+  document.getElementById('habits-container').innerHTML = html;
 }
 
 function renderCompare() {
-  const {year, month, day} = state;
-  document.getElementById('date-title').textContent = thaiDate(year, month, day);
-  document.getElementById('date-sub').textContent = thaiDayOfWeek(year, month, day);
-
-  document.getElementById('view-single').style.display = 'none';
-  document.getElementById('view-compare').style.display = '';
-  document.getElementById('tab-single').className = 'nav-tab';
-  document.getElementById('tab-compare').className = 'nav-tab active';
+  const {year,month,day} = state;
+  document.getElementById('tab-single').className='nav-tab';
+  document.getElementById('tab-compare').className='nav-tab active';
+  document.getElementById('view-single').style.display='none';
+  document.getElementById('view-compare').style.display='';
 
   ['p','n'].forEach(who => {
-    const checked = getChecked(year, month, day, who);
+    const checked = getChecked(year,month,day,who);
     const cnt = checked.length;
-    document.getElementById(`cmp-score-${who}`).textContent = `${cnt} / 30`;
-    document.getElementById(`cmp-bar-${who}`).style.width = Math.round(cnt/30*100) + '%';
-
-    let html = '';
+    document.getElementById(`cmp-score-${who}`).textContent=`${cnt} / 30`;
+    document.getElementById(`cmp-bar-${who}`).style.width=Math.round(cnt/30*100)+'%';
+    let html='';
     HABITS.forEach(h => {
       const done = checked.includes(h.id);
-      const doneClass = done ? `done-${who}` : '';
-      const chkClass = done ? `chk-${who}` : '';
-      html += `<div class="cmp-item ${doneClass}" onclick="toggle(${year},${month},${day},'${who}',${h.id})">
-        <div class="cmp-chk ${chkClass}">${done ? '✓' : ''}</div>
+      const dc=done?`done-${who}`:'', cc=done?`chk-${who}`:'';
+      html+=`<div class="cmp-item ${dc}" onclick="toggle(${year},${month},${day},'${who}',${h.id})">
+        <div class="cmp-chk ${cc}">${done?'✓':''}</div>
         <span class="cmp-text">${h.text}</span>
       </div>`;
     });
-    document.getElementById(`cmp-list-${who}`).innerHTML = html;
+    document.getElementById(`cmp-list-${who}`).innerHTML=html;
   });
 }
 
-function render() {
+function renderAll() {
+  const {year,month,day} = state;
+  document.getElementById('date-title').textContent = thaiDate(year,month,day);
+  document.getElementById('date-sub').textContent   = thaiDow(year,month,day);
   renderCal();
-  if (state.view === 'single') renderSingle();
-  else renderCompare();
+  if (state.view==='single') renderSingle(); else renderCompare();
 }
 
-render();
+// ── INIT ──────────────────────────────────────────────
+// Subscribe to today's data, then hide loading screen
+subscribeDay(state.year, state.month, state.day);
+setSyncStatus('online');
+renderAll();
+document.getElementById('loading-overlay').style.opacity = '0';
+setTimeout(() => { document.getElementById('loading-overlay').style.display='none'; }, 350);
 </script>
 </body>
 </html>
