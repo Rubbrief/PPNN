@@ -99,6 +99,22 @@
   .habit.done-p .habit-text{color:var(--pp)}
   .habit.done-n .habit-text{color:var(--nn)}
 
+  /* NOTE */
+  .habit-wrap{margin-bottom:4px}
+  .habit{margin-bottom:0}
+  .note-btn{flex-shrink:0;width:26px;height:26px;border-radius:6px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;opacity:.4;transition:all .15s;margin-top:0;color:var(--text-2)}
+  .note-btn:hover{opacity:.9;background:rgba(0,0,0,.05)}
+  .note-btn.has-note{opacity:1;color:var(--pp)}
+  .note-area{display:none;border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius-sm) var(--radius-sm);background:var(--surface);padding:8px 14px 8px 46px}
+  .habit-wrap.note-open .note-area{display:block}
+  .habit-wrap:not(.note-open) .habit{border-radius:var(--radius-sm)}
+  .habit-wrap.note-open .habit{border-radius:var(--radius-sm) var(--radius-sm) 0 0}
+  .note-area.bg-p{background:rgba(237,232,248,.5);border-color:rgba(124,92,191,.2)}
+  .note-area.bg-n{background:rgba(250,232,238,.5);border-color:rgba(212,95,127,.2)}
+  .note-textarea{width:100%;border:none;background:transparent;resize:none;font-family:inherit;font-size:13px;color:var(--text);line-height:1.6;outline:none;min-height:56px}
+  .note-textarea::placeholder{color:var(--text-3)}
+  .note-saved{font-size:11px;color:var(--text-3);margin-top:3px;text-align:right;min-height:15px;transition:opacity .3s}
+
   /* COMPARE VIEW */
   .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   .cmp-panel{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden}
@@ -385,7 +401,9 @@ let state = { year:TODAY.getFullYear(), month:TODAY.getMonth(), day:TODAY.getDat
 
 /* ── FIREBASE ─────────────────────────────────────── */
 function dayPath(y,m,d,who){ return `habits/${y}_${String(m+1).padStart(2,'0')}_${String(d).padStart(2,'0')}/${who}`; }
+function notePath(y,m,d,who,id){ return `notes/${y}_${String(m+1).padStart(2,'0')}_${String(d).padStart(2,'0')}/${who}/${id}`; }
 function cKey(y,m,d,who){ return `${y}_${m}_${d}_${who}`; }
+function nKey(y,m,d,who,id){ return `n_${y}_${m}_${d}_${who}_${id}`; }
 
 function setSyncStatus(s){
   const dot=document.getElementById('sync-dot'), txt=document.getElementById('sync-text');
@@ -428,6 +446,68 @@ async function toggle(y,m,d,who,id){
 }
 window.toggle=toggle;
 
+// ── NOTES ────────────────────────────────────────────
+// Subscribe notes for current day+person when view opens
+let noteUnsubs=[];
+function unsubNotes(){ noteUnsubs.forEach(u=>u&&u()); noteUnsubs=[]; }
+
+function subscribeNotes(y,m,d,who){
+  unsubNotes();
+  HABITS.forEach(h=>{
+    const r=ref(db,notePath(y,m,d,who,h.id));
+    const unsub=onValue(r,snap=>{
+      state.cache[nKey(y,m,d,who,h.id)]=snap.val()||'';
+      // update textarea live if open, without full re-render
+      const ta=document.getElementById(`note-ta-${h.id}`);
+      if(ta && document.activeElement!==ta){
+        ta.value=snap.val()||'';
+        autoResize(ta);
+      }
+    });
+    noteUnsubs.push(unsub);
+  });
+}
+
+const noteTimers={};
+async function saveNote(y,m,d,who,id,val){
+  state.cache[nKey(y,m,d,who,id)]=val;
+  clearTimeout(noteTimers[id]);
+  const meta=document.getElementById(`note-meta-${id}`);
+  if(meta) meta.textContent='กำลังบันทึก...';
+  noteTimers[id]=setTimeout(async()=>{
+    setSyncStatus('syncing');
+    try{
+      await set(ref(db,notePath(y,m,d,who,id)), val||null);
+      setSyncStatus('online');
+      if(meta){ meta.textContent='บันทึกแล้ว ✓'; setTimeout(()=>{ if(meta)meta.textContent=''; },2000); }
+      // refresh note-btn indicator
+      const btn=document.getElementById(`note-btn-${id}`);
+      if(btn) btn.className='note-btn'+(val?` has-note`:'');
+    } catch(e){ setSyncStatus('offline'); if(meta) meta.textContent='บันทึกไม่สำเร็จ'; }
+  },800);
+}
+window.saveNote=saveNote;
+
+function toggleNote(id){
+  const wrap=document.getElementById(`habit-wrap-${id}`);
+  if(!wrap) return;
+  const isOpen=wrap.classList.contains('note-open');
+  wrap.classList.toggle('note-open',!isOpen);
+  if(!isOpen){
+    const ta=document.getElementById(`note-ta-${id}`);
+    if(ta){ ta.focus(); autoResize(ta); }
+  }
+}
+window.toggleNote=toggleNote;
+
+function autoResize(ta){
+  ta.style.height='auto';
+  ta.style.height=ta.scrollHeight+'px';
+}
+window.autoResize=autoResize;
+
+function getNote(y,m,d,who,id){ return state.cache[nKey(y,m,d,who,id)]||''; }
+
 function getChecked(y,m,d,who){ return state.cache[cKey(y,m,d,who)]||[]; }
 function countDay(y,m,d,who){ return getChecked(y,m,d,who).length; }
 function pctDay(y,m,d,who){ return Math.round(countDay(y,m,d,who)/31*100); }
@@ -441,7 +521,7 @@ window.changeMonth=function(dir){
 };
 window.setView=function(v){ state.view=v; renderAll(); };
 window.setPerson=function(p){ state.person=p; renderAll(); };
-window.selectDay=function(d){ state.day=d; renderAll(); };
+window.selectDay=function(d){ state.day=d; renderAll(); if(state.view==='single') subscribeNotes(state.year,state.month,d,state.person); };
 
 /* ── RENDER HELPERS ───────────────────────────────── */
 function thaiDate(y,m,d){ return `${d} ${THAI_MONTHS[m]} ${y+543}`; }
@@ -496,16 +576,37 @@ function renderSingle(){
       const done=checked.includes(h.id);
       const dc=done?(person==='p'?'done-p':'done-n'):'';
       const cc=done?(person==='p'?'chk-p':'chk-n'):'';
-      html+=`<div class="habit ${dc}" onclick="toggle(${year},${month},${day},'${person}',${h.id})">
-        <div class="chk ${cc}">${done?'✓':''}</div>
-        <span class="habit-text">${h.text}</span></div>`;
+      const noteVal=getNote(year,month,day,person,h.id);
+      const hasNote=noteVal.length>0;
+      const noteBg=done?(person==='p'?'bg-p':'bg-n'):'';
+      const escaped=noteVal.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+      html+=`<div class="habit-wrap" id="habit-wrap-${h.id}">
+        <div class="habit ${dc}" onclick="toggle(${year},${month},${day},'${person}',${h.id})">
+          <div class="chk ${cc}">${done?'✓':''}</div>
+          <span class="habit-text">${h.text}</span>
+          <button class="note-btn${hasNote?' has-note':''}" id="note-btn-${h.id}"
+            onclick="event.stopPropagation();toggleNote(${h.id})" title="เพิ่มโน้ต">📝</button>
+        </div>
+        <div class="note-area ${noteBg}" id="note-area-${h.id}">
+          <textarea class="note-textarea" id="note-ta-${h.id}"
+            placeholder="เขียนโน้ตของวันนี้..."
+            oninput="autoResize(this);saveNote(${year},${month},${day},'${person}',${h.id},this.value)"
+            >${escaped}</textarea>
+          <div class="note-saved" id="note-meta-${h.id}"></div>
+        </div>
+      </div>`;
     });
     html+=`</div></div>`;
   });
   document.getElementById('habits-container').innerHTML=html;
+  // restore open state & resize textareas
+  document.querySelectorAll('.note-textarea').forEach(ta=>autoResize(ta));
+  // subscribe notes for live sync
+  subscribeNotes(year,month,day,person);
 }
 
 function renderCompare(){
+  unsubNotes();
   const {year,month,day}=state;
   document.getElementById('tab-single').className='nav-tab';
   document.getElementById('tab-compare').className='nav-tab active';
@@ -533,6 +634,7 @@ function renderCompare(){
 }
 
 function renderSummary(){
+  unsubNotes();
   const {year,month}=state;
   document.getElementById('tab-single').className='nav-tab';
   document.getElementById('tab-compare').className='nav-tab';
