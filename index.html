@@ -278,7 +278,7 @@
           <div class="cmp-head">
             <div class="avatar" style="background:var(--pp-light);color:var(--pp)">ป</div>
             <span class="cmp-name" style="color:var(--pp)">ปังปอนด์</span>
-            <span class="cmp-score" id="cmp-score-p">0 / 31</span>
+            <span class="cmp-score" id="cmp-score-p">0 / 29</span>
           </div>
           <div class="cmp-bar-wrap"><div class="cmp-bar bar-p" id="cmp-bar-p" style="width:0%"></div></div>
           <div class="cmp-items" id="cmp-list-p"></div>
@@ -287,7 +287,7 @@
           <div class="cmp-head">
             <div class="avatar" style="background:var(--nn-light);color:var(--nn)">น</div>
             <span class="cmp-name" style="color:var(--nn)">นานา</span>
-            <span class="cmp-score" id="cmp-score-n">0 / 31</span>
+            <span class="cmp-score" id="cmp-score-n">0 / 29</span>
           </div>
           <div class="cmp-bar-wrap"><div class="cmp-bar bar-n" id="cmp-bar-n" style="width:0%"></div></div>
           <div class="cmp-items" id="cmp-list-n"></div>
@@ -365,12 +365,10 @@ const HABITS = [
   {id:9,text:'ลดเวลาหน้าจอ ก่อนนอนอย่างน้อย 30 นาที',cat:'sleep'},
   {id:10,text:'รับแสงแดดยามเช้า 15-20 นาที',cat:'move'},
   {id:11,text:'เดินให้ได้ 8,000-10,000 ก้าวต่อวัน',cat:'move'},
-  {id:12,text:'เวทเทรนนิ่ง',cat:'move'},
-  {id:13,text:'คาร์ดิโอหรือวิ่ง',cat:'move'},
+  {id:12,text:'เวทเทรนนิ่ง หรือ คาร์ดิโอ/วิ่ง',cat:'move'},
   {id:14,text:'ยืดเหยียดร่างกายวันละ 5-10 นาที',cat:'move'},
   {id:15,text:'ลุกเดินทุก 1 ชั่วโมง หากนั่งทำงานนาน',cat:'move'},
   {id:16,text:'ฝึกทรงตัวหรือบริหารข้อต่อสัปดาห์ละ 2 ครั้ง',cat:'move'},
-  {id:17,text:'ออกกำลังกายแม้ไม่มีแรง อย่างน้อย 10 นาที',cat:'move'},
   {id:18,text:'ลงมือทำสิ่งสำคัญที่สุดของวัน เป็นสิ่งแรก',cat:'mind'},
   {id:19,text:'วางแผน/จัดลำดับความสำคัญของงาน 3 ข้อสำหรับวันพรุ่งนี้ ก่อนเข้านอน',cat:'mind'},
   {id:20,text:'จด 3 สิ่งที่รู้สึกขอบคุณในแต่ละวัน',cat:'mind'},
@@ -510,7 +508,7 @@ function getNote(y,m,d,who,id){ return state.cache[nKey(y,m,d,who,id)]||''; }
 
 function getChecked(y,m,d,who){ return state.cache[cKey(y,m,d,who)]||[]; }
 function countDay(y,m,d,who){ return getChecked(y,m,d,who).length; }
-function pctDay(y,m,d,who){ return Math.round(countDay(y,m,d,who)/31*100); }
+function pctDay(y,m,d,who){ return Math.round(countDay(y,m,d,who)/29*100); }
 
 /* ── NAV ──────────────────────────────────────────── */
 window.changeMonth=function(dir){
@@ -620,8 +618,8 @@ function renderCompare(){
 
   ['p','n'].forEach(who=>{
     const checked=getChecked(year,month,day,who), cnt=checked.length;
-    document.getElementById(`cmp-score-${who}`).textContent=`${cnt} / 31`;
-    document.getElementById(`cmp-bar-${who}`).style.width=Math.round(cnt/31*100)+'%';
+    document.getElementById(`cmp-score-${who}`).textContent=`${cnt} / 29`;
+    document.getElementById(`cmp-bar-${who}`).style.width=Math.round(cnt/29*100)+'%';
     let html='';
     HABITS.forEach(h=>{
       const done=checked.includes(h.id);
