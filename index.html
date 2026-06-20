@@ -262,7 +262,7 @@
           <div class="cmp-head">
             <div class="avatar" style="background:var(--pp-light);color:var(--pp)">ป</div>
             <span class="cmp-name" style="color:var(--pp)">ปังปอนด์</span>
-            <span class="cmp-score" id="cmp-score-p">0 / 30</span>
+            <span class="cmp-score" id="cmp-score-p">0 / 31</span>
           </div>
           <div class="cmp-bar-wrap"><div class="cmp-bar bar-p" id="cmp-bar-p" style="width:0%"></div></div>
           <div class="cmp-items" id="cmp-list-p"></div>
@@ -271,7 +271,7 @@
           <div class="cmp-head">
             <div class="avatar" style="background:var(--nn-light);color:var(--nn)">น</div>
             <span class="cmp-name" style="color:var(--nn)">นานา</span>
-            <span class="cmp-score" id="cmp-score-n">0 / 30</span>
+            <span class="cmp-score" id="cmp-score-n">0 / 31</span>
           </div>
           <div class="cmp-bar-wrap"><div class="cmp-bar bar-n" id="cmp-bar-n" style="width:0%"></div></div>
           <div class="cmp-items" id="cmp-list-n"></div>
@@ -341,8 +341,8 @@ const HABITS = [
   {id:1,text:'กินผักทุกวัน อย่างน้อย 2 มื้อ',cat:'food'},
   {id:2,text:'กินผลไม้แทนขนมหวาน',cat:'food'},
   {id:3,text:'ไม่กินอาหารแปรรูป',cat:'food'},
-  {id:4,text:'กินน้ำตาลให้น้อยกว่า 23 กรัม',cat:'food'},
-  {id:5,text:'กินโปรตีนให้เพียงพอทุกมื้อ',cat:'food'},
+  {id:4,text:'กินน้ำตาลให้น้อยกว่า 30 กรัม',cat:'food'},
+  {id:5,text:'กินโปรตีนมื้อละ 30 กรัม',cat:'food'},
   {id:6,text:'หยุดกินเมื่ออิ่มประมาณ 80%',cat:'food'},
   {id:7,text:'นอนให้ได้ 7-8 ชั่วโมง',cat:'sleep'},
   {id:8,text:'เข้านอนและตื่นเวลาใกล้เคียงกันทุกวัน',cat:'sleep'},
@@ -367,6 +367,7 @@ const HABITS = [
   {id:27,text:'ให้คะแนนตัวเองจากความสม่ำเสมอ ไม่ใช่ความสมบูรณ์แบบ',cat:'mind'},
   {id:28,text:'ส่งความรู้ให้กันและกัน 1 เรื่อง',cat:'social'},
   {id:29,text:'โทรหา หรือทักหาคนที่รักบ้าง',cat:'social'},
+  {id:30,text:'แปรงฟันตอนเที่ยง',cat:'food'},
 ];
 const CATS = {
   food:  {label:'🥗 โภชนาการ',      bg:'var(--cat-food-bg)',   color:'var(--cat-food)'},
@@ -429,7 +430,7 @@ window.toggle=toggle;
 
 function getChecked(y,m,d,who){ return state.cache[cKey(y,m,d,who)]||[]; }
 function countDay(y,m,d,who){ return getChecked(y,m,d,who).length; }
-function pctDay(y,m,d,who){ return Math.round(countDay(y,m,d,who)/30*100); }
+function pctDay(y,m,d,who){ return Math.round(countDay(y,m,d,who)/31*100); }
 
 /* ── NAV ──────────────────────────────────────────── */
 window.changeMonth=function(dir){
@@ -518,8 +519,8 @@ function renderCompare(){
 
   ['p','n'].forEach(who=>{
     const checked=getChecked(year,month,day,who), cnt=checked.length;
-    document.getElementById(`cmp-score-${who}`).textContent=`${cnt} / 30`;
-    document.getElementById(`cmp-bar-${who}`).style.width=Math.round(cnt/30*100)+'%';
+    document.getElementById(`cmp-score-${who}`).textContent=`${cnt} / 31`;
+    document.getElementById(`cmp-bar-${who}`).style.width=Math.round(cnt/31*100)+'%';
     let html='';
     HABITS.forEach(h=>{
       const done=checked.includes(h.id);
