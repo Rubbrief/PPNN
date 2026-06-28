@@ -71,7 +71,16 @@
   .p-bar-fill{height:100%;border-radius:2px;transition:width .4s}
   .fill-p{background:var(--pp)} .fill-n{background:var(--nn)}
 
-  /* CONTENT */
+  /* CONTENT & DAILY NOTES */
+  .content-wrapper{display:flex;gap:16px;align-items:flex-start}
+  .content{flex:1}
+  .daily-note-box{flex:0 0 260px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;position:sticky;top:76px;max-height:calc(100vh - 100px)}
+  .daily-note-title{font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+  .daily-note-textarea{width:100%;border:1px solid var(--border-mid);background:var(--bg);border-radius:var(--radius-sm);padding:8px 10px;font-family:inherit;font-size:13px;color:var(--text);resize:none;outline:none;transition:border-color .15s;min-height:120px}
+  .daily-note-textarea:focus{border-color:var(--pp);background:var(--surface)}
+  .daily-note-textarea::placeholder{color:var(--text-3)}
+  .daily-note-meta{font-size:11px;color:var(--text-3);margin-top:6px;text-align:right;min-height:15px;transition:opacity .3s}
+
   .date-header{margin-bottom:16px}
   .date-title{font-size:20px;font-weight:600}
   .date-sub{font-size:13px;color:var(--text-3)}
@@ -195,6 +204,11 @@
   @keyframes spin{to{transform:rotate(360deg)}}
   .loading-text{font-size:14px;color:var(--text-3)}
 
+  @media(max-width:1000px){
+    .content-wrapper{flex-direction:column}
+    .daily-note-box{flex:0 0 auto;position:static;max-height:none}
+  }
+
   @media(max-width:700px){
     .main{grid-template-columns:1fr;padding:16px}
     .sidebar{position:static}
@@ -251,87 +265,101 @@
     </div>
   </aside>
 
-  <!-- CONTENT -->
-  <main class="content">
-    <div class="date-header" id="date-header">
-      <div class="date-title" id="date-title"></div>
-      <div class="date-sub"   id="date-sub"></div>
-    </div>
-
-    <!-- SINGLE -->
-    <div id="view-single">
-      <div class="person-switcher">
-        <button class="ps-btn active-p" id="btn-p" onclick="setPerson('p')">
-          <div class="ps-avatar av-p">ป</div>ปังปอนด์
-        </button>
-        <button class="ps-btn" id="btn-n" onclick="setPerson('n')">
-          <div class="ps-avatar av-n">น</div>นานา
-        </button>
+  <!-- CONTENT WRAPPER WITH DAILY NOTES -->
+  <div class="content-wrapper">
+    <!-- CONTENT -->
+    <main class="content">
+      <div class="date-header" id="date-header">
+        <div class="date-title" id="date-title"></div>
+        <div class="date-sub"   id="date-sub"></div>
       </div>
-      <div id="habits-container"></div>
-    </div>
 
-    <!-- COMPARE -->
-    <div id="view-compare" style="display:none">
-      <div class="compare-grid">
-        <div class="cmp-panel">
-          <div class="cmp-head">
-            <div class="avatar" style="background:var(--pp-light);color:var(--pp)">ป</div>
-            <span class="cmp-name" style="color:var(--pp)">ปังปอนด์</span>
-            <span class="cmp-score" id="cmp-score-p">0 / 29</span>
+      <!-- SINGLE -->
+      <div id="view-single">
+        <div class="person-switcher">
+          <button class="ps-btn active-p" id="btn-p" onclick="setPerson('p')">
+            <div class="ps-avatar av-p">ป</div>ปังปอนด์
+          </button>
+          <button class="ps-btn" id="btn-n" onclick="setPerson('n')">
+            <div class="ps-avatar av-n">น</div>นานา
+          </button>
+        </div>
+        <div id="habits-container"></div>
+      </div>
+
+      <!-- COMPARE -->
+      <div id="view-compare" style="display:none">
+        <div class="compare-grid">
+          <div class="cmp-panel">
+            <div class="cmp-head">
+              <div class="avatar" style="background:var(--pp-light);color:var(--pp)">ป</div>
+              <span class="cmp-name" style="color:var(--pp)">ปังปอนด์</span>
+              <span class="cmp-score" id="cmp-score-p">0 / 29</span>
+            </div>
+            <div class="cmp-bar-wrap"><div class="cmp-bar bar-p" id="cmp-bar-p" style="width:0%"></div></div>
+            <div class="cmp-items" id="cmp-list-p"></div>
           </div>
-          <div class="cmp-bar-wrap"><div class="cmp-bar bar-p" id="cmp-bar-p" style="width:0%"></div></div>
-          <div class="cmp-items" id="cmp-list-p"></div>
-        </div>
-        <div class="cmp-panel">
-          <div class="cmp-head">
-            <div class="avatar" style="background:var(--nn-light);color:var(--nn)">น</div>
-            <span class="cmp-name" style="color:var(--nn)">นานา</span>
-            <span class="cmp-score" id="cmp-score-n">0 / 29</span>
+          <div class="cmp-panel">
+            <div class="cmp-head">
+              <div class="avatar" style="background:var(--nn-light);color:var(--nn)">น</div>
+              <span class="cmp-name" style="color:var(--nn)">นานา</span>
+              <span class="cmp-score" id="cmp-score-n">0 / 29</span>
+            </div>
+            <div class="cmp-bar-wrap"><div class="cmp-bar bar-n" id="cmp-bar-n" style="width:0%"></div></div>
+            <div class="cmp-items" id="cmp-list-n"></div>
           </div>
-          <div class="cmp-bar-wrap"><div class="cmp-bar bar-n" id="cmp-bar-n" style="width:0%"></div></div>
-          <div class="cmp-items" id="cmp-list-n"></div>
         </div>
       </div>
-    </div>
 
-    <!-- MONTHLY SUMMARY -->
-    <div id="view-summary" style="display:none">
-      <div class="summary-header">
-        <div class="summary-title" id="sum-title"></div>
-        <div class="summary-sub">เปรียบเทียบรายวันตลอดเดือน</div>
-      </div>
-
-      <!-- STAT CARDS -->
-      <div class="stat-cards" id="stat-cards"></div>
-
-      <!-- BAR CHART -->
-      <div class="chart-card">
-        <div class="chart-card-title">% ความสำเร็จรายวัน</div>
-        <div class="legend">
-          <div class="legend-item"><div class="legend-dot legend-dot-p"></div>ปังปอนด์</div>
-          <div class="legend-item"><div class="legend-dot legend-dot-n"></div>นานา</div>
+      <!-- MONTHLY SUMMARY -->
+      <div id="view-summary" style="display:none">
+        <div class="summary-header">
+          <div class="summary-title" id="sum-title"></div>
+          <div class="summary-sub">เปรียบเทียบรายวันตลอดเดือน</div>
         </div>
-        <div class="chart-svg-wrap" id="chart-svg-wrap"></div>
-      </div>
 
-      <!-- DAY TABLE -->
-      <div class="card" style="overflow:hidden">
-        <table class="day-table" id="day-table">
-          <thead>
-            <tr>
-              <th>วัน</th>
-              <th></th>
-              <th style="min-width:100px">ปังปอนด์</th>
-              <th style="min-width:100px">นานา</th>
-              <th>ชนะ</th>
-            </tr>
-          </thead>
-          <tbody id="day-tbody"></tbody>
-        </table>
+        <!-- STAT CARDS -->
+        <div class="stat-cards" id="stat-cards"></div>
+
+        <!-- BAR CHART -->
+        <div class="chart-card">
+          <div class="chart-card-title">% ความสำเร็จรายวัน</div>
+          <div class="legend">
+            <div class="legend-item"><div class="legend-dot legend-dot-p"></div>ปังปอนด์</div>
+            <div class="legend-item"><div class="legend-dot legend-dot-n"></div>นานา</div>
+          </div>
+          <div class="chart-svg-wrap" id="chart-svg-wrap"></div>
+        </div>
+
+        <!-- DAY TABLE -->
+        <div class="card" style="overflow:hidden">
+          <table class="day-table" id="day-table">
+            <thead>
+              <tr>
+                <th>วัน</th>
+                <th></th>
+                <th style="min-width:100px">ปังปอนด์</th>
+                <th style="min-width:100px">นานา</th>
+                <th>ชนะ</th>
+              </tr>
+            </thead>
+            <tbody id="day-tbody"></tbody>
+          </table>
+        </div>
       </div>
-    </div>
-  </main>
+    </main>
+
+    <!-- DAILY NOTES SIDEBAR -->
+    <aside class="daily-note-box" id="daily-note-box">
+      <div class="daily-note-title">📝 บันทึกวันนี้</div>
+      <textarea 
+        class="daily-note-textarea" 
+        id="daily-note-textarea"
+        placeholder="บันทึกสิ่งพิเศษในวันนี้..."
+      ></textarea>
+      <div class="daily-note-meta" id="daily-note-meta"></div>
+    </aside>
+  </div>
 </div>
 
 <script type="module">
@@ -400,8 +428,10 @@ let state = { year:TODAY.getFullYear(), month:TODAY.getMonth(), day:TODAY.getDat
 /* ── FIREBASE ─────────────────────────────────────── */
 function dayPath(y,m,d,who){ return `habits/${y}_${String(m+1).padStart(2,'0')}_${String(d).padStart(2,'0')}/${who}`; }
 function notePath(y,m,d,who,id){ return `notes/${y}_${String(m+1).padStart(2,'0')}_${String(d).padStart(2,'0')}/${who}/${id}`; }
+function dailyNotePath(y,m,d){ return `daily_notes/${y}_${String(m+1).padStart(2,'0')}_${String(d).padStart(2,'0')}`; }
 function cKey(y,m,d,who){ return `${y}_${m}_${d}_${who}`; }
 function nKey(y,m,d,who,id){ return `n_${y}_${m}_${d}_${who}_${id}`; }
+function dnKey(y,m,d){ return `dn_${y}_${m}_${d}`; }
 
 function setSyncStatus(s){
   const dot=document.getElementById('sync-dot'), txt=document.getElementById('sync-text');
@@ -445,7 +475,6 @@ async function toggle(y,m,d,who,id){
 window.toggle=toggle;
 
 // ── NOTES ────────────────────────────────────────────
-// Subscribe notes for current day+person when view opens
 let noteUnsubs=[];
 function unsubNotes(){ noteUnsubs.forEach(u=>u&&u()); noteUnsubs=[]; }
 
@@ -455,7 +484,6 @@ function subscribeNotes(y,m,d,who){
     const r=ref(db,notePath(y,m,d,who,h.id));
     const unsub=onValue(r,snap=>{
       state.cache[nKey(y,m,d,who,h.id)]=snap.val()||'';
-      // update textarea live if open, without full re-render
       const ta=document.getElementById(`note-ta-${h.id}`);
       if(ta && document.activeElement!==ta){
         ta.value=snap.val()||'';
@@ -478,7 +506,6 @@ async function saveNote(y,m,d,who,id,val){
       await set(ref(db,notePath(y,m,d,who,id)), val||null);
       setSyncStatus('online');
       if(meta){ meta.textContent='บันทึกแล้ว ✓'; setTimeout(()=>{ if(meta)meta.textContent=''; },2000); }
-      // refresh note-btn indicator
       const btn=document.getElementById(`note-btn-${id}`);
       if(btn) btn.className='note-btn'+(val?` has-note`:'');
     } catch(e){ setSyncStatus('offline'); if(meta) meta.textContent='บันทึกไม่สำเร็จ'; }
@@ -506,6 +533,41 @@ window.autoResize=autoResize;
 
 function getNote(y,m,d,who,id){ return state.cache[nKey(y,m,d,who,id)]||''; }
 
+// ── DAILY NOTES ──────────────────────────────────────
+let dailyNoteUnsub=null;
+function unsubDailyNote(){ dailyNoteUnsub && dailyNoteUnsub(); dailyNoteUnsub=null; }
+
+function subscribeDailyNote(y,m,d){
+  unsubDailyNote();
+  const r=ref(db,dailyNotePath(y,m,d));
+  dailyNoteUnsub=onValue(r,snap=>{
+    state.cache[dnKey(y,m,d)]=snap.val()||'';
+    const ta=document.getElementById('daily-note-textarea');
+    if(ta && document.activeElement!==ta){
+      ta.value=snap.val()||'';
+    }
+  });
+}
+
+const dailyNoteTimer={};
+async function saveDailyNote(y,m,d,val){
+  state.cache[dnKey(y,m,d)]=val;
+  clearTimeout(dailyNoteTimer.id);
+  const meta=document.getElementById('daily-note-meta');
+  if(meta) meta.textContent='กำลังบันทึก...';
+  dailyNoteTimer.id=setTimeout(async()=>{
+    setSyncStatus('syncing');
+    try{
+      await set(ref(db,dailyNotePath(y,m,d)), val||null);
+      setSyncStatus('online');
+      if(meta){ meta.textContent='บันทึกแล้ว ✓'; setTimeout(()=>{ if(meta)meta.textContent=''; },2000); }
+    } catch(e){ setSyncStatus('offline'); if(meta) meta.textContent='บันทึกไม่สำเร็จ'; }
+  },800);
+}
+window.saveDailyNote=saveDailyNote;
+
+function getDailyNote(y,m,d){ return state.cache[dnKey(y,m,d)]||''; }
+
 function getChecked(y,m,d,who){ return state.cache[cKey(y,m,d,who)]||[]; }
 function countDay(y,m,d,who){ return getChecked(y,m,d,who).length; }
 function pctDay(y,m,d,who){ return Math.round(countDay(y,m,d,who)/29*100); }
@@ -519,7 +581,14 @@ window.changeMonth=function(dir){
 };
 window.setView=function(v){ state.view=v; renderAll(); };
 window.setPerson=function(p){ state.person=p; renderAll(); };
-window.selectDay=function(d){ state.day=d; renderAll(); if(state.view==='single') subscribeNotes(state.year,state.month,d,state.person); };
+window.selectDay=function(d){ 
+  state.day=d; 
+  renderAll(); 
+  if(state.view==='single'){
+    subscribeNotes(state.year,state.month,d,state.person);
+    subscribeDailyNote(state.year,state.month,d);
+  }
+};
 
 /* ── RENDER HELPERS ───────────────────────────────── */
 function thaiDate(y,m,d){ return `${d} ${THAI_MONTHS[m]} ${y+543}`; }
@@ -557,11 +626,19 @@ function renderSingle(){
   document.getElementById('view-single').style.display='';
   document.getElementById('view-compare').style.display='none';
   document.getElementById('view-summary').style.display='none';
+  document.getElementById('daily-note-box').style.display='';
   document.getElementById('date-header').style.display='';
   document.getElementById('date-title').textContent=thaiDate(year,month,day);
   document.getElementById('date-sub').textContent=thaiDow(year,month,day);
   document.getElementById('btn-p').className='ps-btn'+(person==='p'?' active-p':'');
   document.getElementById('btn-n').className='ps-btn'+(person==='n'?' active-n':'');
+
+  // Render daily note
+  const dailyNoteText=getDailyNote(year,month,day);
+  const dnTA=document.getElementById('daily-note-textarea');
+  if(dnTA && document.activeElement!==dnTA){
+    dnTA.value=dailyNoteText;
+  }
 
   const checked=getChecked(year,month,day,person);
   const bycat={};
@@ -597,14 +674,14 @@ function renderSingle(){
     html+=`</div></div>`;
   });
   document.getElementById('habits-container').innerHTML=html;
-  // restore open state & resize textareas
   document.querySelectorAll('.note-textarea').forEach(ta=>autoResize(ta));
-  // subscribe notes for live sync
   subscribeNotes(year,month,day,person);
+  subscribeDailyNote(year,month,day);
 }
 
 function renderCompare(){
   unsubNotes();
+  unsubDailyNote();
   const {year,month,day}=state;
   document.getElementById('tab-single').className='nav-tab';
   document.getElementById('tab-compare').className='nav-tab active';
@@ -612,6 +689,7 @@ function renderCompare(){
   document.getElementById('view-single').style.display='none';
   document.getElementById('view-compare').style.display='';
   document.getElementById('view-summary').style.display='none';
+  document.getElementById('daily-note-box').style.display='none';
   document.getElementById('date-header').style.display='';
   document.getElementById('date-title').textContent=thaiDate(year,month,day);
   document.getElementById('date-sub').textContent=thaiDow(year,month,day);
@@ -633,6 +711,7 @@ function renderCompare(){
 
 function renderSummary(){
   unsubNotes();
+  unsubDailyNote();
   const {year,month}=state;
   document.getElementById('tab-single').className='nav-tab';
   document.getElementById('tab-compare').className='nav-tab';
@@ -640,6 +719,7 @@ function renderSummary(){
   document.getElementById('view-single').style.display='none';
   document.getElementById('view-compare').style.display='none';
   document.getElementById('view-summary').style.display='';
+  document.getElementById('daily-note-box').style.display='none';
   document.getElementById('date-header').style.display='none';
 
   document.getElementById('sum-title').textContent=`สรุปเดือน${THAI_MONTHS[month]} ${year+543}`;
@@ -647,7 +727,6 @@ function renderSummary(){
   const total=new Date(year,month+1,0).getDate();
   const todayInMonth = (year===TODAY.getFullYear()&&month===TODAY.getMonth()) ? TODAY.getDate() : total;
 
-  // collect data
   let sumP=0,sumN=0,daysWithDataP=0,daysWithDataN=0,winsP=0,winsN=0,ties=0;
   const rows=[];
   for(let d=1;d<=total;d++){
@@ -664,7 +743,6 @@ function renderSummary(){
   const bestDayP=rows.filter(r=>r.hasP).reduce((a,b)=>b.pp>a.pp?b:a,{pp:-1,d:'-'});
   const bestDayN=rows.filter(r=>r.hasN).reduce((a,b)=>b.pn>a.pn?b:a,{pn:-1,d:'-'});
 
-  // STAT CARDS
   document.getElementById('stat-cards').innerHTML=`
     <div class="stat-card">
       <div class="stat-card-label">เฉลี่ยต่อวัน</div>
@@ -695,12 +773,10 @@ function renderSummary(){
       </div>
     </div>`;
 
-  // BAR CHART (SVG)
   const W=Math.max(total*22+60, 600), H=160, padL=36, padB=24, padT=10;
   const chartH=H-padB-padT, barW=8, gap=14;
   const scaleY=v=>(chartH - (v/100)*chartH) + padT;
   let svgLines='', svgBars='', svgLabels='';
-  // Y axis gridlines
   [0,25,50,75,100].forEach(v=>{
     const y=scaleY(v);
     svgLines+=`<line x1="${padL}" x2="${W}" y1="${y}" y2="${y}" stroke="#E5E5E5" stroke-width="1"/>`;
@@ -722,7 +798,6 @@ function renderSummary(){
       ${svgLines}${svgBars}${svgLabels}
     </svg>`;
 
-  // TABLE
   let tbody='';
   if(!rows.some(r=>r.hasP||r.hasN)){
     tbody=`<tr class="no-data-row"><td colspan="5">ยังไม่มีข้อมูลในเดือนนี้</td></tr>`;
@@ -759,6 +834,15 @@ function renderAll(){
 subscribeMonth(state.year, state.month);
 setSyncStatus('online');
 renderAll();
+
+// Setup daily note textarea event listener
+document.getElementById('daily-note-textarea').addEventListener('input', function(){
+  saveDailyNote(state.year, state.month, state.day, this.value);
+});
+
+// Initial daily note load
+subscribeDailyNote(state.year, state.month, state.day);
+
 document.getElementById('loading-overlay').style.opacity='0';
 setTimeout(()=>{ document.getElementById('loading-overlay').style.display='none'; },350);
 </script>
