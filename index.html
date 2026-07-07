@@ -70,6 +70,10 @@
   .p-bar{height:3px;border-radius:2px;background:rgba(0,0,0,.08);margin-top:6px;overflow:hidden}
   .p-bar-fill{height:100%;border-radius:2px;transition:width .4s}
   .fill-p{background:var(--pp)} .fill-n{background:var(--nn)}
+  
+  /* EDIT NAME BUTTON */
+  .edit-name-btn{opacity:.5;transition:opacity .15s}
+  .edit-name-btn:hover{opacity:.9}
 
   /* CONTENT & DAILY NOTES */
   .content-wrapper{display:flex;gap:16px;align-items:flex-start}
@@ -253,12 +257,15 @@
       <div class="person-strip">
         <div class="p-card active-p" id="pc-p" onclick="setPerson('p')">
           <div class="p-pct pct-p" id="pct-p">0%</div>
-          <div class="p-name">ปังปอนด์</div>
+          <div class="p-name" id="pname-p">ปังปอนด์</div>
           <div class="p-bar"><div class="p-bar-fill fill-p" id="pbar-p" style="width:0%"></div></div>
         </div>
         <div class="p-card" id="pc-n" onclick="setPerson('n')">
           <div class="p-pct pct-n" id="pct-n">0%</div>
-          <div class="p-name">นานา</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
+            <div class="p-name" id="pname-n">ช่องว่าง</div>
+            <button style="width:20px;height:20px;border:none;background:transparent;cursor:pointer;opacity:.5;transition:opacity .15s;font-size:12px;" onclick="event.stopPropagation();editPersonName('n')" title="แก้ไขชื่อ">✏️</button>
+          </div>
           <div class="p-bar"><div class="p-bar-fill fill-n" id="pbar-n" style="width:0%"></div></div>
         </div>
       </div>
@@ -278,10 +285,10 @@
       <div id="view-single">
         <div class="person-switcher">
           <button class="ps-btn active-p" id="btn-p" onclick="setPerson('p')">
-            <div class="ps-avatar av-p">ป</div>ปังปอนด์
+            <div class="ps-avatar av-p">ป</div><span id="btn-p-name">ปังปอนด์</span>
           </button>
           <button class="ps-btn" id="btn-n" onclick="setPerson('n')">
-            <div class="ps-avatar av-n">น</div>นานา
+            <div class="ps-avatar av-n">น</div><span id="btn-n-name">ช่องว่าง</span>
           </button>
         </div>
         <div id="habits-container"></div>
@@ -293,7 +300,7 @@
           <div class="cmp-panel">
             <div class="cmp-head">
               <div class="avatar" style="background:var(--pp-light);color:var(--pp)">ป</div>
-              <span class="cmp-name" style="color:var(--pp)">ปังปอนด์</span>
+              <span class="cmp-name" style="color:var(--pp)" id="cmp-name-p">ปังปอนด์</span>
               <span class="cmp-score" id="cmp-score-p">0 / 29</span>
             </div>
             <div class="cmp-bar-wrap"><div class="cmp-bar bar-p" id="cmp-bar-p" style="width:0%"></div></div>
@@ -302,7 +309,7 @@
           <div class="cmp-panel">
             <div class="cmp-head">
               <div class="avatar" style="background:var(--nn-light);color:var(--nn)">น</div>
-              <span class="cmp-name" style="color:var(--nn)">นานา</span>
+              <span class="cmp-name" style="color:var(--nn)" id="cmp-name-n">ช่องว่าง</span>
               <span class="cmp-score" id="cmp-score-n">0 / 29</span>
             </div>
             <div class="cmp-bar-wrap"><div class="cmp-bar bar-n" id="cmp-bar-n" style="width:0%"></div></div>
@@ -325,8 +332,8 @@
         <div class="chart-card">
           <div class="chart-card-title">% ความสำเร็จรายวัน</div>
           <div class="legend">
-            <div class="legend-item"><div class="legend-dot legend-dot-p"></div>ปังปอนด์</div>
-            <div class="legend-item"><div class="legend-dot legend-dot-n"></div>นานา</div>
+            <div class="legend-item"><div class="legend-dot legend-dot-p"></div><span id="legend-name-p">ปังปอนด์</span></div>
+            <div class="legend-item"><div class="legend-dot legend-dot-n"></div><span id="legend-name-n">ช่องว่าง</span></div>
           </div>
           <div class="chart-svg-wrap" id="chart-svg-wrap"></div>
         </div>
@@ -338,8 +345,8 @@
               <tr>
                 <th>วัน</th>
                 <th></th>
-                <th style="min-width:100px">ปังปอนด์</th>
-                <th style="min-width:100px">นานา</th>
+                <th style="min-width:100px"><span id="table-name-p">ปังปอนด์</span></th>
+                <th style="min-width:100px"><span id="table-name-n">ช่องว่าง</span></th>
                 <th>ชนะ</th>
               </tr>
             </thead>
@@ -406,6 +413,7 @@ const HABITS = [
   {id:27,text:'ให้คะแนนตัวเองจากความสม่ำเสมอ ไม่ใช่ความสมบูรณ์แบบ',cat:'mind'},
   {id:31,text:'พัฒนาตนเองวันละ 1 %',cat:'mind'},
   {id:33,text:'สิ่งที่ต้องปรับปรุงในวันนี้',cat:'mind'},
+  {id:34,text:'ฝึกภาษาอังกฤษ',cat:'mind'},
   {id:28,text:'ส่งความรู้ให้กันและกัน 1 เรื่อง',cat:'social'},
   {id:29,text:'โทรหา หรือทักหาคนที่รักบ้าง',cat:'social'},
   {id:30,text:'แปรงฟันตอนเที่ยง',cat:'food'},
@@ -423,12 +431,13 @@ const THAI_DAYS_S    = ['อา','จ','อ','พ','พฤ','ศ','ส'];
 const THAI_DAYS_L    = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
 
 const TODAY = new Date();
-let state = { year:TODAY.getFullYear(), month:TODAY.getMonth(), day:TODAY.getDate(), person:'p', view:'single', cache:{} };
+let state = { year:TODAY.getFullYear(), month:TODAY.getMonth(), day:TODAY.getDate(), person:'p', view:'single', cache:{}, personNames:{p:'ปังปอนด์', n:'ช่องว่าง'} };
 
 /* ── FIREBASE ─────────────────────────────────────── */
 function dayPath(y,m,d,who){ return `habits/${y}_${String(m+1).padStart(2,'0')}_${String(d).padStart(2,'0')}/${who}`; }
 function notePath(y,m,d,who,id){ return `notes/${y}_${String(m+1).padStart(2,'0')}_${String(d).padStart(2,'0')}/${who}/${id}`; }
 function dailyNotePath(y,m,d){ return `daily_notes/${y}_${String(m+1).padStart(2,'0')}_${String(d).padStart(2,'0')}`; }
+function personNamePath(who){ return `settings/person_names/${who}`; }
 function cKey(y,m,d,who){ return `${y}_${m}_${d}_${who}`; }
 function nKey(y,m,d,who,id){ return `n_${y}_${m}_${d}_${who}_${id}`; }
 function dnKey(y,m,d){ return `dn_${y}_${m}_${d}`; }
@@ -568,6 +577,44 @@ window.saveDailyNote=saveDailyNote;
 
 function getDailyNote(y,m,d){ return state.cache[dnKey(y,m,d)]||''; }
 
+// ── PERSON NAMES ──────────────────────────────────────
+let nameUnsubs=[];
+function unsubPersonNames(){ nameUnsubs.forEach(u=>u&&u()); nameUnsubs=[]; }
+
+function subscribePersonNames(){
+  unsubPersonNames();
+  ['p','n'].forEach(who=>{
+    const r=ref(db,personNamePath(who));
+    const unsub=onValue(r,snap=>{
+      const name=snap.val();
+      if(name) state.personNames[who]=name;
+      renderAll();
+    });
+    nameUnsubs.push(unsub);
+  });
+}
+
+async function setPersonName(who,newName){
+  if(!newName || newName.trim()=='') return;
+  setSyncStatus('syncing');
+  state.personNames[who]=newName;
+  renderAll();
+  try{
+    await set(ref(db,personNamePath(who)), newName);
+    setSyncStatus('online');
+  } catch(e){ setSyncStatus('offline'); }
+}
+window.setPersonName=setPersonName;
+
+function editPersonName(who){
+  const current=state.personNames[who]||'';
+  const newName=prompt(`เปลี่ยนชื่อ:\n(ปล่อยไว้ว่างให้ใช้ชื่อเดิม)`, current);
+  if(newName!==null && newName.trim()!=''){
+    setPersonName(who, newName.trim());
+  }
+}
+window.editPersonName=editPersonName;
+
 function getChecked(y,m,d,who){ return state.cache[cKey(y,m,d,who)]||[]; }
 function countDay(y,m,d,who){ return getChecked(y,m,d,who).length; }
 function pctDay(y,m,d,who){ return Math.round(countDay(y,m,d,who)/29*100); }
@@ -613,6 +660,7 @@ function renderCal(){
     const pct=pctDay(year,month,day,who);
     document.getElementById(`pct-${who}`).textContent=pct+'%';
     document.getElementById(`pbar-${who}`).style.width=pct+'%';
+    document.getElementById(`pname-${who}`).textContent=state.personNames[who]||'';
   });
   document.getElementById('pc-p').className='p-card'+(state.person==='p'?' active-p':'');
   document.getElementById('pc-n').className='p-card'+(state.person==='n'?' active-n':'');
@@ -632,6 +680,8 @@ function renderSingle(){
   document.getElementById('date-sub').textContent=thaiDow(year,month,day);
   document.getElementById('btn-p').className='ps-btn'+(person==='p'?' active-p':'');
   document.getElementById('btn-n').className='ps-btn'+(person==='n'?' active-n':'');
+  document.getElementById('btn-p-name').textContent=state.personNames.p||'ปังปอนด์';
+  document.getElementById('btn-n-name').textContent=state.personNames.n||'ช่องว่าง';
 
   // Render daily note
   const dailyNoteText=getDailyNote(year,month,day);
@@ -696,6 +746,7 @@ function renderCompare(){
 
   ['p','n'].forEach(who=>{
     const checked=getChecked(year,month,day,who), cnt=checked.length;
+    document.getElementById(`cmp-name-${who}`).textContent=state.personNames[who]||'';
     document.getElementById(`cmp-score-${who}`).textContent=`${cnt} / 29`;
     document.getElementById(`cmp-bar-${who}`).style.width=Math.round(cnt/29*100)+'%';
     let html='';
@@ -722,6 +773,12 @@ function renderSummary(){
   document.getElementById('daily-note-box').style.display='none';
   document.getElementById('date-header').style.display='none';
 
+  // Update names
+  document.getElementById('legend-name-p').textContent=state.personNames.p||'ปังปอนด์';
+  document.getElementById('legend-name-n').textContent=state.personNames.n||'ช่องว่าง';
+  document.getElementById('table-name-p').textContent=state.personNames.p||'ปังปอนด์';
+  document.getElementById('table-name-n').textContent=state.personNames.n||'ช่องว่าง';
+
   document.getElementById('sum-title').textContent=`สรุปเดือน${THAI_MONTHS[month]} ${year+543}`;
 
   const total=new Date(year,month+1,0).getDate();
@@ -743,33 +800,35 @@ function renderSummary(){
   const bestDayP=rows.filter(r=>r.hasP).reduce((a,b)=>b.pp>a.pp?b:a,{pp:-1,d:'-'});
   const bestDayN=rows.filter(r=>r.hasN).reduce((a,b)=>b.pn>a.pn?b:a,{pn:-1,d:'-'});
 
+  const nameP=state.personNames.p||'ปังปอนด์';
+  const nameN=state.personNames.n||'ช่องว่าง';
   document.getElementById('stat-cards').innerHTML=`
     <div class="stat-card">
       <div class="stat-card-label">เฉลี่ยต่อวัน</div>
       <div class="stat-card-row">
-        <div><div class="stat-who">ปังปอนด์</div><div class="stat-val col-p">${avgP}%</div></div>
-        <div><div class="stat-who">นานา</div><div class="stat-val col-n">${avgN}%</div></div>
+        <div><div class="stat-who">${nameP}</div><div class="stat-val col-p">${avgP}%</div></div>
+        <div><div class="stat-who">${nameN}</div><div class="stat-val col-n">${avgN}%</div></div>
       </div>
     </div>
     <div class="stat-card">
       <div class="stat-card-label">วันที่ดีที่สุด</div>
       <div class="stat-card-row">
-        <div><div class="stat-who">ปังปอนด์</div><div class="stat-val col-p">${bestDayP.pp>=0?bestDayP.d:'-'}</div></div>
-        <div><div class="stat-who">นานา</div><div class="stat-val col-n">${bestDayN.pn>=0?bestDayN.d:'-'}</div></div>
+        <div><div class="stat-who">${nameP}</div><div class="stat-val col-p">${bestDayP.pp>=0?bestDayP.d:'-'}</div></div>
+        <div><div class="stat-who">${nameN}</div><div class="stat-val col-n">${bestDayN.pn>=0?bestDayN.d:'-'}</div></div>
       </div>
     </div>
     <div class="stat-card">
       <div class="stat-card-label">วันที่บันทึก</div>
       <div class="stat-card-row">
-        <div><div class="stat-who">ปังปอนด์</div><div class="stat-val col-p">${daysWithDataP}</div></div>
-        <div><div class="stat-who">นานา</div><div class="stat-val col-n">${daysWithDataN}</div></div>
+        <div><div class="stat-who">${nameP}</div><div class="stat-val col-p">${daysWithDataP}</div></div>
+        <div><div class="stat-who">${nameN}</div><div class="stat-val col-n">${daysWithDataN}</div></div>
       </div>
     </div>
     <div class="stat-card">
       <div class="stat-card-label">จำนวนวันที่ชนะ</div>
       <div class="stat-card-row">
-        <div><div class="stat-who">ปังปอนด์</div><div class="stat-val col-p">${winsP}</div></div>
-        <div><div class="stat-who">นานา</div><div class="stat-val col-n">${winsN}</div></div>
+        <div><div class="stat-who">${nameP}</div><div class="stat-val col-p">${winsP}</div></div>
+        <div><div class="stat-who">${nameN}</div><div class="stat-val col-n">${winsN}</div></div>
       </div>
     </div>`;
 
@@ -806,8 +865,8 @@ function renderSummary(){
       if(!hasP&&!hasN) return;
       const isToday=d===TODAY.getDate()&&month===TODAY.getMonth()&&year===TODAY.getFullYear();
       const dow=THAI_DAYS_S[new Date(year,month,d).getDay()];
-      const winBadge = w==='p'?`<span class="winner-badge win-p">ปังปอนด์</span>`:
-                       w==='n'?`<span class="winner-badge win-n">นานา</span>`:
+      const winBadge = w==='p'?`<span class="winner-badge win-p">${nameP}</span>`:
+                       w==='n'?`<span class="winner-badge win-n">${nameN}</span>`:
                        w==='tie'?`<span class="winner-badge win-tie">เสมอ</span>`:``;
       const pillP=hasP?`<span class="pct-pill col-p">${pp}%</span>`:`<span class="pct-pill empty">-</span>`;
       const pillN=hasN?`<span class="pct-pill col-n">${pn}%</span>`:`<span class="pct-pill empty">-</span>`;
@@ -832,6 +891,7 @@ function renderAll(){
 
 /* ── INIT ─────────────────────────────────────────── */
 subscribeMonth(state.year, state.month);
+subscribePersonNames();
 setSyncStatus('online');
 renderAll();
 
