@@ -1,4 +1,314 @@
-<!-- CONTENT -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Habits — ปังปอนด์ & นานา</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&family=Noto+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pp:#7C5CBF; --pp-light:#EDE8F8; --pp-mid:#A98FD6;
+    --nn:#D45F7F; --nn-light:#FAE8EE; --nn-mid:#E495AB;
+    --bg:#F7F6F3; --surface:#FFFFFF;
+    --border:rgba(0,0,0,0.08); --border-mid:rgba(0,0,0,0.14);
+    --text:#1A1A1A; --text-2:#555; --text-3:#999;
+    --radius:12px; --radius-sm:8px;
+    --cat-food:#2E7D5E; --cat-food-bg:#E5F4EE;
+    --cat-sleep:#5A4A9E; --cat-sleep-bg:#EEEAF8;
+    --cat-move:#3B6E2A; --cat-move-bg:#EBF5E5;
+    --cat-mind:#8A5A10; --cat-mind-bg:#FBF0DE;
+    --cat-social:#A02060; --cat-social-bg:#FAE5EF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Sarabun','Noto Sans Thai',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6}
+
+  /* TOPBAR */
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;gap:12px}
+  .logo{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;white-space:nowrap}
+  .logo-dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,var(--pp),var(--nn));flex-shrink:0}
+  .nav-tabs{display:flex;gap:4px;background:var(--bg);border-radius:var(--radius-sm);padding:3px}
+  .nav-tab{padding:5px 14px;border-radius:6px;border:none;background:transparent;color:var(--text-2);cursor:pointer;font-family:inherit;font-size:13px;font-weight:400;transition:all .15s;white-space:nowrap}
+  .nav-tab.active{background:var(--surface);color:var(--text);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+  .sync-badge{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-3);padding:4px 10px;border-radius:20px;border:1px solid var(--border);white-space:nowrap;flex-shrink:0}
+  .sync-dot{width:7px;height:7px;border-radius:50%;background:#ccc;flex-shrink:0}
+  .sync-dot.online{background:#4CAF50}
+  .sync-dot.syncing{background:#FF9800;animation:pulse 1s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+  /* LAYOUT */
+  .main{max-width:1040px;margin:0 auto;padding:24px 20px;display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:start}
+  .sidebar{position:sticky;top:76px}
+  .card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden}
+
+  /* CALENDAR */
+  .cal-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px}
+  .cal-month{font-size:15px;font-weight:600}
+  .cal-nav{width:28px;height:28px;border-radius:6px;border:1px solid var(--border-mid);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-2);font-size:16px;transition:background .1s}
+  .cal-nav:hover{background:var(--bg)}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);padding:0 10px 10px;gap:3px}
+  .cal-dn{text-align:center;font-size:11px;font-weight:500;color:var(--text-3);padding:4px 0 6px}
+  .cal-d{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text-2);border:1.5px solid transparent;transition:all .12s;gap:2px}
+  .cal-d:hover{background:var(--bg);color:var(--text)}
+  .cal-d.today{background:var(--bg);font-weight:600;color:var(--text)}
+  .cal-d.selected{border-color:var(--pp);color:var(--pp);font-weight:600;background:var(--pp-light)}
+  .cal-d.empty{cursor:default;pointer-events:none}
+  .dots{display:flex;gap:2px}
+  .dot{width:4px;height:4px;border-radius:50%}
+  .dot-p{background:var(--pp)} .dot-n{background:var(--nn)}
+
+  /* PERSON STRIP */
+  .person-strip{display:grid;grid-template-columns:1fr 1fr;padding:12px;gap:8px;border-top:1px solid var(--border)}
+  .p-card{border-radius:var(--radius-sm);border:1.5px solid transparent;padding:10px;cursor:pointer;transition:all .15s;background:var(--bg)}
+  .p-card:hover{border-color:var(--border-mid)}
+  .p-card.active-p{background:var(--pp-light);border-color:var(--pp)}
+  .p-card.active-n{background:var(--nn-light);border-color:var(--nn)}
+  .p-pct{font-size:20px;font-weight:600}
+  .pct-p{color:var(--pp)} .pct-n{color:var(--nn)}
+  .p-name{font-size:13px;font-weight:500;color:var(--text-2);margin-top:4px}
+  .p-bar{height:3px;border-radius:2px;background:rgba(0,0,0,.08);margin-top:6px;overflow:hidden}
+  .p-bar-fill{height:100%;border-radius:2px;transition:width .4s}
+  .fill-p{background:var(--pp)} .fill-n{background:var(--nn)}
+  
+  /* EDIT NAME BUTTON */
+  .edit-name-btn{opacity:.5;transition:opacity .15s}
+  .edit-name-btn:hover{opacity:.9}
+
+  /* CONTENT & DAILY NOTES */
+  .content-wrapper{display:flex;gap:16px;align-items:flex-start}
+  .content{flex:1}
+  .daily-note-box{flex:0 0 260px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;position:sticky;top:76px;max-height:calc(100vh - 100px)}
+  .daily-note-title{font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+  .daily-note-textarea{width:100%;border:1px solid var(--border-mid);background:var(--bg);border-radius:var(--radius-sm);padding:8px 10px;font-family:inherit;font-size:13px;color:var(--text);resize:none;outline:none;transition:border-color .15s;min-height:120px}
+  .daily-note-textarea:focus{border-color:var(--pp);background:var(--surface)}
+  .daily-note-textarea::placeholder{color:var(--text-3)}
+  .daily-note-meta{font-size:11px;color:var(--text-3);margin-top:6px;text-align:right;min-height:15px;transition:opacity .3s}
+
+  .date-header{margin-bottom:16px}
+  .date-title{font-size:20px;font-weight:600}
+  .date-sub{font-size:13px;color:var(--text-3)}
+
+  /* PERSON SWITCHER */
+  .person-switcher{display:flex;gap:8px;margin-bottom:16px}
+  .ps-btn{padding:7px 20px;border-radius:var(--radius-sm);border:1.5px solid var(--border-mid);background:var(--surface);color:var(--text-2);cursor:pointer;font-family:inherit;font-size:14px;font-weight:500;transition:all .15s;display:flex;align-items:center;gap:8px}
+  .ps-btn:hover{background:var(--bg)}
+  .ps-btn.active-p{background:var(--pp-light);border-color:var(--pp);color:var(--pp)}
+  .ps-btn.active-n{background:var(--nn-light);border-color:var(--nn);color:var(--nn)}
+  .ps-avatar{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600}
+  .av-p{background:var(--pp);color:#fff} .av-n{background:var(--nn);color:#fff}
+
+  /* HABITS */
+  .cat-block{margin-bottom:20px}
+  .cat-label{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;margin-bottom:8px;letter-spacing:.02em}
+  .habit{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border-radius:var(--radius-sm);cursor:pointer;transition:all .12s;background:var(--surface);border:1px solid var(--border);margin-bottom:4px}
+  .habit:hover{border-color:var(--border-mid)}
+  .habit.done-p{background:var(--pp-light);border-color:rgba(124,92,191,.3)}
+  .habit.done-n{background:var(--nn-light);border-color:rgba(212,95,127,.3)}
+  .chk{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border-mid);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:13px;color:#fff;font-weight:600}
+  .chk.chk-p{background:var(--pp);border-color:var(--pp)}
+  .chk.chk-n{background:var(--nn);border-color:var(--nn)}
+  .habit-text{font-size:14px;line-height:1.5;flex:1}
+  .habit.done-p .habit-text{color:var(--pp)}
+  .habit.done-n .habit-text{color:var(--nn)}
+
+  /* NOTE */
+  .habit-wrap{margin-bottom:4px}
+  .habit{margin-bottom:0}
+  .note-btn{flex-shrink:0;width:26px;height:26px;border-radius:6px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;opacity:.4;transition:all .15s;margin-top:0;color:var(--text-2)}
+  .note-btn:hover{opacity:.9;background:rgba(0,0,0,.05)}
+  .note-btn.has-note{opacity:1;color:var(--pp)}
+  .note-area{display:none;border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius-sm) var(--radius-sm);background:var(--surface);padding:8px 14px 8px 46px}
+  .habit-wrap.note-open .note-area{display:block}
+  .habit-wrap:not(.note-open) .habit{border-radius:var(--radius-sm)}
+  .habit-wrap.note-open .habit{border-radius:var(--radius-sm) var(--radius-sm) 0 0}
+  .note-area.bg-p{background:rgba(237,232,248,.5);border-color:rgba(124,92,191,.2)}
+  .note-area.bg-n{background:rgba(250,232,238,.5);border-color:rgba(212,95,127,.2)}
+  .note-textarea{width:100%;border:none;background:transparent;resize:none;font-family:inherit;font-size:13px;color:var(--text);line-height:1.6;outline:none;min-height:56px}
+  .note-textarea::placeholder{color:var(--text-3)}
+  .note-saved{font-size:11px;color:var(--text-3);margin-top:3px;text-align:right;min-height:15px;transition:opacity .3s}
+
+  /* COMPARE VIEW */
+  .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .cmp-panel{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden}
+  .cmp-head{padding:14px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+  .avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+  .cmp-name{font-size:15px;font-weight:600}
+  .cmp-score{margin-left:auto;font-size:13px;color:var(--text-3)}
+  .cmp-bar-wrap{height:4px;background:var(--bg)}
+  .cmp-bar{height:100%;transition:width .4s}
+  .bar-p{background:var(--pp)} .bar-n{background:var(--nn)}
+  .cmp-items{padding:8px;display:flex;flex-direction:column;gap:2px;max-height:68vh;overflow-y:auto}
+  .cmp-item{display:flex;align-items:flex-start;gap:8px;padding:7px 8px;border-radius:6px;cursor:pointer;transition:background .1s}
+  .cmp-item:hover{background:var(--bg)}
+  .cmp-item.done-p{background:var(--pp-light)}
+  .cmp-item.done-n{background:var(--nn-light)}
+  .cmp-chk{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border-mid);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+  .cmp-chk.chk-p{background:var(--pp);border-color:var(--pp)}
+  .cmp-chk.chk-n{background:var(--nn);border-color:var(--nn)}
+  .cmp-text{font-size:12px;color:var(--text-2);line-height:1.4}
+  .cmp-item.done-p .cmp-text{color:var(--pp)}
+  .cmp-item.done-n .cmp-text{color:var(--nn)}
+
+  /* ── MONTHLY SUMMARY ── */
+  .summary-header{margin-bottom:20px}
+  .summary-title{font-size:20px;font-weight:600}
+  .summary-sub{font-size:13px;color:var(--text-3);margin-top:2px}
+
+  /* stat cards row */
+  .stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+  .stat-card-label{font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+  .stat-card-row{display:flex;align-items:flex-end;gap:16px}
+  .stat-val{font-size:22px;font-weight:600;line-height:1}
+  .stat-val.col-p{color:var(--pp)} .stat-val.col-n{color:var(--nn)}
+  .stat-who{font-size:11px;color:var(--text-3);margin-bottom:2px}
+
+  /* legend */
+  .legend{display:flex;gap:16px;margin-bottom:12px;align-items:center}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-2)}
+  .legend-dot{width:10px;height:10px;border-radius:3px}
+  .legend-dot-p{background:var(--pp)} .legend-dot-n{background:var(--nn)}
+
+  /* chart container */
+  .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 20px 12px;margin-bottom:24px}
+  .chart-card-title{font-size:14px;font-weight:600;margin-bottom:16px;color:var(--text)}
+  .chart-wrap{overflow-x:auto;overflow-y:hidden}
+  .chart-inner{min-width:600px}
+
+  /* bar chart SVG wrapper */
+  .chart-svg-wrap{width:100%;overflow-x:auto}
+
+  /* day table */
+  .day-table{width:100%;border-collapse:collapse;font-size:13px}
+  .day-table th{text-align:left;padding:8px 12px;color:var(--text-3);font-weight:500;border-bottom:1px solid var(--border);font-size:12px}
+  .day-table td{padding:7px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+  .day-table tr:last-child td{border-bottom:none}
+  .day-table tr:hover td{background:var(--bg)}
+  .day-table tr.is-today td{background:rgba(124,92,191,.04)}
+  .day-num{font-weight:600;color:var(--text);width:32px}
+  .day-dow{color:var(--text-3);font-size:12px;width:60px}
+  .pct-pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:12px;font-weight:600;min-width:44px;text-align:center}
+  .pct-pill.col-p{background:var(--pp-light);color:var(--pp)}
+  .pct-pill.col-n{background:var(--nn-light);color:var(--nn)}
+  .pct-pill.empty{background:var(--bg);color:var(--text-3);font-weight:400}
+  .mini-bar-wrap{flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;min-width:60px}
+  .mini-bar{height:100%;border-radius:4px;transition:width .3s}
+  .mini-bar-p{background:var(--pp)} .mini-bar-n{background:var(--nn)}
+  .bar-cell{display:flex;align-items:center;gap:8px}
+  .winner-badge{font-size:10px;padding:1px 6px;border-radius:10px;font-weight:600}
+  .win-p{background:var(--pp-light);color:var(--pp)}
+  .win-n{background:var(--nn-light);color:var(--nn)}
+  .win-tie{background:#F0F0F0;color:var(--text-3)}
+  .no-data-row td{color:var(--text-3);text-align:center;padding:24px;font-size:13px}
+
+  /* LOADING OVERLAY */
+  .loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:999;transition:opacity .3s}
+  .loading-spinner{width:36px;height:36px;border-radius:50%;border:3px solid var(--border-mid);border-top-color:var(--pp);animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading-text{font-size:14px;color:var(--text-3)}
+
+  @media(max-width:1000px){
+    .content-wrapper{flex-direction:column}
+    .daily-note-box{flex:0 0 auto;position:static;max-height:none}
+  }
+
+  /* SCHEDULE VIEW */
+  .schedule-container{padding:20px 0}
+  .schedule-header{margin-bottom:24px}
+  .schedule-title{font-size:24px;font-weight:600;margin-bottom:16px}
+  .schedule-tab-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;border:2px solid var(--border-mid);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-2);cursor:pointer;font-family:inherit;font-size:14px;font-weight:500;transition:all .15s}
+  .schedule-tab-btn:hover{border-color:var(--border-mid);background:var(--bg)}
+  .schedule-tab-btn.active{border-color:var(--pp);color:var(--pp);background:var(--pp-light)}
+  .schedule-name-input{padding:8px 10px;border:1px solid var(--border-mid);border-radius:var(--radius-sm);background:var(--surface);font-family:inherit;font-size:13px;outline:none;transition:border-color .15s}
+  .schedule-name-input:focus{border-color:var(--pp)}
+  .schedule-edit-name-btn{padding:8px 12px;background:var(--pp);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s}
+  .schedule-edit-name-btn:hover{background:var(--pp-mid)}
+  .schedule-add-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;border:2px solid var(--border-mid);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-2);cursor:pointer;font-family:inherit;font-size:14px;font-weight:500;transition:all .15s}
+  .schedule-add-btn:hover{border-color:var(--pp);color:var(--pp);background:var(--pp-light)}
+  .schedule-list{display:flex;flex-direction:column;gap:4px}
+  .schedule-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);transition:all .12s;cursor:pointer;user-select:none}
+  .schedule-item:hover{border-color:var(--border-mid);background:var(--bg)}
+  .schedule-item.done{background:rgba(124,92,191,.08);border-color:rgba(124,92,191,.2)}
+  .schedule-item.done .schedule-time,.schedule-item.done .schedule-text{color:var(--text-3)}
+  .schedule-checkbox{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border-mid);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:600;pointer-events:none}
+  .schedule-checkbox.checked{background:var(--pp);border-color:var(--pp);color:#fff}
+  .schedule-time{font-size:13px;font-weight:600;color:var(--text);width:50px;flex-shrink:0}
+  .schedule-text{font-size:14px;color:var(--text-2);flex:1}
+  .schedule-actions{display:flex;gap:6px;flex-shrink:0;pointer-events:auto}
+  .schedule-btn{width:28px;height:28px;border:none;background:transparent;border-radius:6px;cursor:pointer;font-size:13px;opacity:.5;transition:all .15s;display:flex;align-items:center;justify-content:center}
+  .schedule-btn:hover{opacity:1;background:rgba(0,0,0,.05)}
+  .schedule-input-row{display:flex;gap:8px;padding:8px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:8px}
+  .schedule-time-input{width:70px;padding:8px 10px;border:1px solid var(--border-mid);border-radius:6px;background:var(--surface);font-family:inherit;font-size:13px;outline:none}
+  .schedule-text-input{flex:1;padding:8px 10px;border:1px solid var(--border-mid);border-radius:6px;background:var(--surface);font-family:inherit;font-size:13px;outline:none}
+  .schedule-save-btn{padding:8px 14px;background:var(--pp);color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;transition:all .15s}
+  .schedule-save-btn:hover{background:var(--pp-mid)}
+  .schedule-cancel-btn{padding:8px 14px;background:var(--border);color:var(--text-2);border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;transition:all .15s}
+  .schedule-cancel-btn:hover{background:var(--border-mid)}
+
+  @media(max-width:700px){
+    .main{grid-template-columns:1fr;padding:16px}
+    .sidebar{position:static}
+    .compare-grid{grid-template-columns:1fr}
+    .topbar{padding:0 12px}
+    .sync-badge span{display:none}
+    .stat-cards{grid-template-columns:1fr 1fr}
+    .nav-tab{padding:5px 10px}
+  }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">กำลังเชื่อมต่อ Firebase...</div>
+</div>
+
+<nav class="topbar">
+  <div class="logo"><span class="logo-dot"></span>Daily Habits</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" id="tab-single"  onclick="setView('single')">บันทึก</button>
+    <button class="nav-tab"        id="tab-compare" onclick="setView('compare')">เปรียบเทียบ</button>
+    <button class="nav-tab"        id="tab-summary" onclick="setView('summary')">สรุปเดือน</button>
+    <button class="nav-tab"        id="tab-schedule" onclick="setView('schedule')">Schedule</button>
+  </div>
+  <div class="sync-badge">
+    <div class="sync-dot" id="sync-dot"></div>
+    <span id="sync-text">กำลังเชื่อมต่อ...</span>
+  </div>
+</nav>
+
+<div class="main">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="card">
+      <div class="cal-head">
+        <button class="cal-nav" onclick="changeMonth(-1)">&#8249;</button>
+        <span class="cal-month" id="cal-month-label"></span>
+        <button class="cal-nav" onclick="changeMonth(1)">&#8250;</button>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div class="person-strip">
+        <div class="p-card active-p" id="pc-p" onclick="setPerson('p')">
+          <div class="p-pct pct-p" id="pct-p">0%</div>
+          <div class="p-name" id="pname-p">ปังปอนด์</div>
+          <div class="p-bar"><div class="p-bar-fill fill-p" id="pbar-p" style="width:0%"></div></div>
+        </div>
+        <div class="p-card" id="pc-n" onclick="setPerson('n')">
+          <div class="p-pct pct-n" id="pct-n">0%</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
+            <div class="p-name" id="pname-n">ช่องว่าง</div>
+            <button style="width:20px;height:20px;border:none;background:transparent;cursor:pointer;opacity:.5;transition:opacity .15s;font-size:12px;" onclick="event.stopPropagation();editPersonName('n')" title="แก้ไขชื่อ">✏️</button>
+          </div>
+          <div class="p-bar"><div class="p-bar-fill fill-n" id="pbar-n" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTENT WRAPPER WITH DAILY NOTES -->
+  <div class="content-wrapper">
+    <!-- CONTENT -->
     <main class="content">
       <div class="date-header" id="date-header">
         <div class="date-title" id="date-title"></div>
@@ -79,35 +389,34 @@
         </div>
       </div>
 
-      <!-- SCHEDULE (SIDE BY SIDE VIEW WITH DRAG & DROP) -->
+      <!-- SCHEDULE -->
       <div id="view-schedule" style="display:none">
         <div class="schedule-container">
           <div class="schedule-header">
-            <div class="summary-title">🗓️ ตารางเวลาประจำวัน (Schedule)</div>
-            <div class="summary-sub">สามารถคลิกลากขึ้น-ลงเพื่อเรียงลำดับกิจกรรมใหม่ได้</div>
-          </div>
-          
-          <div class="compare-grid">
-            <!-- LEFT PANEL: PANGPOND -->
-            <div class="cmp-panel">
-              <div class="cmp-head" style="border-bottom: 1px solid var(--border); padding-bottom: 12px;">
-                <div class="avatar" style="background:var(--pp-light);color:var(--pp)">ป</div>
-                <span class="cmp-name" style="color:var(--pp)" id="sched-title-p">ปังปอนด์</span>
-                <button style="border:none;background:transparent;cursor:pointer;opacity:.6;font-size:14px;margin-left:6px;" onclick="editPersonName('p')" title="แก้ไขชื่อ">✏️</button>
-                <button class="schedule-add-btn" style="margin-left:auto; padding:5px 10px; font-size:12px;" onclick="toggleScheduleInput('p', true)">+ เพิ่ม</button>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <!-- ปังปอนด์ -->
+              <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+                  <div class="ps-avatar av-p">ป</div>
+                  <span id="sched-name-p-edit" style="font-size:15px;font-weight:600;cursor:pointer;color:var(--pp);flex:1;padding:4px 8px;border-radius:6px;transition:all .15s" onmouseover="this.style.background='var(--pp-light)'" onmouseout="this.style.background=''" onclick="editSchedulePersonNameInline('p')">ปังปอนด์</span>
+                </div>
+                <div class="schedule-list" id="schedule-list-p"></div>
+                <button class="schedule-add-btn" onclick="addScheduleItemForPerson('p')" title="เพิ่มรายการใหม่" style="width:100%;justify-content:center">
+                  <span>+</span> เพิ่มรายการ
+                </button>
               </div>
-              <div class="schedule-list" id="schedule-list-p" style="padding: 10px; min-height: 200px;"></div>
-            </div>
-
-            <!-- RIGHT PANEL: partner -->
-            <div class="cmp-panel">
-              <div class="cmp-head" style="border-bottom: 1px solid var(--border); padding-bottom: 12px;">
-                <div class="avatar" style="background:var(--nn-light);color:var(--nn)">น</div>
-                <span class="cmp-name" style="color:var(--nn)" id="sched-title-n">ช่องว่าง</span>
-                <button style="border:none;background:transparent;cursor:pointer;opacity:.6;font-size:14px;margin-left:6px;" onclick="editPersonName('n')" title="แก้ไขชื่อ">✏️</button>
-                <button class="schedule-add-btn" style="margin-left:auto; padding:5px 10px; font-size:12px;" onclick="toggleScheduleInput('n', true)">+ เพิ่ม</button>
+              
+              <!-- นานา -->
+              <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+                  <div class="ps-avatar av-n">น</div>
+                  <span id="sched-name-n-edit" style="font-size:15px;font-weight:600;cursor:pointer;color:var(--nn);flex:1;padding:4px 8px;border-radius:6px;transition:all .15s" onmouseover="this.style.background='var(--nn-light)'" onmouseout="this.style.background=''" onclick="editSchedulePersonNameInline('n')">ช่องว่าง</span>
+                </div>
+                <div class="schedule-list" id="schedule-list-n"></div>
+                <button class="schedule-add-btn" onclick="addScheduleItemForPerson('n')" title="เพิ่มรายการใหม่" style="width:100%;justify-content:center">
+                  <span>+</span> เพิ่มรายการ
+                </button>
               </div>
-              <div class="schedule-list" id="schedule-list-n" style="padding: 10px; min-height: 200px;"></div>
             </div>
           </div>
         </div>
@@ -182,32 +491,14 @@ const CATS = {
   sleep: {label:'😴 การนอนหลับ',    bg:'var(--cat-sleep-bg)',  color:'var(--cat-sleep)'},
   move:  {label:'🏃 การเคลื่อนไหว', bg:'var(--cat-move-bg)',   color:'var(--cat-move)'},
   mind:  {label:'🧠 จิตใจ & สมาธิ', bg:'var(--cat-mind-bg)',   color:'var(--cat-mind)'},
-  social:{label:'🤝 สังคม',          bg:'var(--cat-social-bg)', color:'var(--cat-social)'},
+  social:{label:'🤝 สังคม',         bg:'var(--cat-social-bg)', color:'var(--cat-social)'},
 };
 const THAI_MONTHS    = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
 const THAI_DAYS_S    = ['อา','จ','อ','พ','พฤ','ศ','ส'];
 const THAI_DAYS_L    = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
 
 const TODAY = new Date();
-
-// Load Init State from localStorage to keep state after F5
-const cachedView = localStorage.getItem('dh_view') || 'single';
-const cachedDay = localStorage.getItem('dh_day') ? parseInt(localStorage.getItem('dh_day')) : TODAY.getDate();
-const cachedMonth = localStorage.getItem('dh_month') ? parseInt(localStorage.getItem('dh_month')) : TODAY.getMonth();
-const cachedYear = localStorage.getItem('dh_year') ? parseInt(localStorage.getItem('dh_year')) : TODAY.getFullYear();
-const cachedPerson = localStorage.getItem('dh_person') || 'p';
-
-let state = { 
-  year: cachedYear, 
-  month: cachedMonth, 
-  day: cachedDay, 
-  person: cachedPerson, 
-  view: cachedView, 
-  cache: {}, 
-  personNames: {p:'ปังปอนด์', n:'ช่องว่าง'}, 
-  showInputs: {p: false, n: false},
-  scheduleData: {p: {}, n: {}}
-};
+let state = { year:TODAY.getFullYear(), month:TODAY.getMonth(), day:TODAY.getDate(), person:'p', view:'single', cache:{}, personNames:{p:'ปังปอนด์', n:'ช่องว่าง'}, showScheduleInput:false };
 
 /* ── FIREBASE ─────────────────────────────────────── */
 function dayPath(y,m,d,who){ return `habits/${y}_${String(m+1).padStart(2,'0')}_${String(d).padStart(2,'0')}/${who}`; }
@@ -220,12 +511,12 @@ function dnKey(y,m,d){ return `dn_${y}_${m}_${d}`; }
 
 function setSyncStatus(s){
   const dot=document.getElementById('sync-dot'), txt=document.getElementById('sync-text');
-  if(!dot || !txt) return;
   if(s==='online'){dot.className='sync-dot online';txt.textContent='ซิงค์แล้ว'}
   if(s==='syncing'){dot.className='sync-dot syncing';txt.textContent='กำลังบันทึก...'}
   if(s==='offline'){dot.className='sync-dot';txt.textContent='ออฟไลน์'}
 }
 
+// Subscribe to whole month (for summary) + selected day
 let activeSubs = [];
 function unsubAll(){ activeSubs.forEach(u=>u&&u()); activeSubs=[]; }
 
@@ -263,551 +554,665 @@ window.toggle=toggle;
 let noteUnsubs=[];
 function unsubNotes(){ noteUnsubs.forEach(u=>u&&u()); noteUnsubs=[]; }
 
-function subscribeNotes(y, m, d, who) {
+function subscribeNotes(y,m,d,who){
   unsubNotes();
-  HABITS.forEach(h => {
-    const r = ref(db, notePath(y, m, d, who, h.id));
-    const unsub = onValue(r, snap => {
-      state.cache[nKey(y, m, d, who, h.id)] = snap.val() || "";
-      const el = document.getElementById(`nt-${h.id}`);
-      if (el && document.activeElement !== el) {
-        el.value = snap.val() || "";
+  HABITS.forEach(h=>{
+    const r=ref(db,notePath(y,m,d,who,h.id));
+    const unsub=onValue(r,snap=>{
+      state.cache[nKey(y,m,d,who,h.id)]=snap.val()||'';
+      const ta=document.getElementById(`note-ta-${h.id}`);
+      if(ta && document.activeElement!==ta){
+        ta.value=snap.val()||'';
+        autoResize(ta);
       }
-      updateNoteBtnState(h.id);
     });
     noteUnsubs.push(unsub);
   });
-
-  const dnRef = ref(db, dailyNotePath(y, m, d));
-  const dnUnsub = onValue(dnRef, snap => {
-    const val = snap.val() || {};
-    state.cache[dnKey(y, m, d)] = val;
-    const textarea = document.getElementById("daily-note-textarea");
-    if (textarea && document.activeElement !== textarea) {
-      textarea.value = val[state.person] || "";
-    }
-    updateDailyNoteMeta(val);
-  });
-  noteUnsubs.push(dnUnsub);
 }
 
-// ── UI RENDERERS ─────────────────────────────────────
-function renderAll() {
-  if (state.view === 'single') renderSingleView();
-  if (state.view === 'compare') renderCompareView();
-  if (state.view === 'summary') renderSummaryView();
-  if (state.view === 'schedule') renderScheduleView();
-  renderCalendar();
-  updateSidebarStats();
-}
-
-function renderSingleView() {
-  const container = document.getElementById("habits-container");
-  if (!container) return;
-
-  const doneList = state.cache[cKey(state.year, state.month, state.day, state.person)] || [];
-  const groups = {};
-  HABITS.forEach(h => { if (!groups[h.cat]) groups[h.cat] = []; groups[h.cat].push(h); });
-
-  let html = "";
-  Object.keys(CATS).forEach(catKey => {
-    if (!groups[catKey]) return;
-    const cat = CATS[catKey];
-    html += `<div class="cat-block">
-      <div class="cat-label" style="background:${cat.bg}; color:${cat.color}">${cat.label}</div>`;
-    
-    groups[catKey].forEach(h => {
-      const isDone = doneList.includes(h.id);
-      const doneClass = isDone ? `done-${state.person}` : "";
-      const chkClass = isDone ? `chk-${state.person}` : "";
-      const noteVal = state.cache[nKey(state.year, state.month, state.day, state.person, h.id)] || "";
-      const hasNoteClass = noteVal ? "has-note" : "";
-      const bgClass = `bg-${state.person}`;
-
-      html += `
-        <div class="habit-wrap" id="wrap-${h.id}">
-          <div class="habit ${doneClass}" onclick="toggle(${state.year},${state.month},${state.day},'${state.person}',${h.id})">
-            <div class="chk ${chkClass}">${isDone ? '✓' : ''}</div>
-            <div class="habit-text">${h.text}</div>
-            <button class="note-btn ${hasNoteClass}" id="nbtn-${h.id}" onclick="event.stopPropagation(); toggleNoteArea(${h.id})">📝</button>
-          </div>
-          <div class="note-area ${bgClass}">
-            <textarea class="note-textarea" id="nt-${h.id}" placeholder="บันทึกเพิ่มเติมสำหรับข้อนี้..." oninput="saveNote(${h.id}, this.value)"></textarea>
-            <div class="note-saved" id="nsaved-${h.id}"></div>
-          </div>
-        </div>`;
-    });
-    html += `</div>`;
-  });
-  container.innerHTML = html;
-}
-
-function renderCompareView() {
-  ['p', 'n'].forEach(who => {
-    const listEl = document.getElementById(`cmp-list-${who}`);
-    const scoreEl = document.getElementById(`cmp-score-${who}`);
-    const barEl = document.getElementById(`cmp-bar-${who}`);
-    if (!listEl) return;
-
-    const doneList = state.cache[cKey(state.year, state.month, state.day, who)] || [];
-    scoreEl.textContent = `${doneList.length} / ${HABITS.length}`;
-    const pct = HABITS.length ? Math.round((doneList.length / HABITS.length) * 100) : 0;
-    barEl.style.width = `${pct}%`;
-
-    listEl.innerHTML = HABITS.map(h => {
-      const isDone = doneList.includes(h.id);
-      return `
-        <div class="cmp-item ${isDone ? 'done-' + who : ''}" onclick="toggle(${state.year},${state.month},${state.day},'${who}',${h.id})">
-          <div class="cmp-chk ${isDone ? 'chk-' + who : ''}">${isDone ? '✓' : ''}</div>
-          <div class="cmp-text">${h.text}</div>
-        </div>`;
-    }).join('');
-  });
-}
-
-function renderSummaryView() {
-  const daysInMonth = new Date(state.year, state.month + 1, 0).getDate();
-  const tbody = document.getElementById("day-tbody");
-  const chartWrap = document.getElementById("chart-svg-wrap");
-  if (!tbody || !chartWrap) return;
-
-  document.getElementById("sum-title").textContent = `สรุปผลเดือน ${THAI_MONTHS[state.month]} ${state.year + 543}`;
-
-  let tableHtml = "";
-  let svgBars = "";
-  let pTotalPct = 0, nTotalPct = 0, daysWithData = 0;
-  let pWins = 0, nWins = 0, ties = 0;
-
-  const barWidth = 16;
-  const gap = 12;
-  const svgWidth = Math.max(600, daysInMonth * (barWidth * 2 + gap) + 40);
-
-  for (let d = 1; d <= daysInMonth; d++) {
-    const pDone = state.cache[cKey(state.year, state.month, d, 'p')] || [];
-    const nDone = state.cache[cKey(state.year, state.month, d, 'n')] || [];
-    
-    const pPct = Math.round((pDone.length / HABITS.length) * 100);
-    const nPct = Math.round((nDone.length / HABITS.length) * 100);
-    
-    const hasData = pDone.length > 0 || nDone.length > 0;
-    if (hasData) {
-      pTotalPct += pPct; nTotalPct += nPct; daysWithData++;
-    }
-
-    let winBadge = `<span class="winner-badge win-tie">เสมอ</span>`;
-    if (pPct > nPct) { winBadge = `<span class="winner-badge win-p">ปังปอนด์</span>`; pWins++; }
-    else if (nPct > pPct) { winBadge = `<span class="winner-badge win-n">${state.personNames.n}</span>`; nWins++; }
-    else if (pPct === nPct && hasData) { ties++; }
-
-    const isToday = state.year === TODAY.getFullYear() && state.month === TODAY.getMonth() && d === TODAY.getDate();
-    const dateObj = new Date(state.year, state.month, d);
-    
-    tableHtml += `
-      <tr class="${isToday ? 'is-today' : ''}" onclick="selectDate(${d})">
-        <td class="day-num">${d}</td>
-        <td class="day-dow">${THAI_DAYS_L[dateObj.getDay()]}</td>
-        <td>
-          <div class="bar-cell">
-            <span class="pct-pill col-p">${pPct}%</span>
-            <div class="mini-bar-wrap"><div class="mini-bar mini-bar-p" style="width:${pPct}%"></div></div>
-          </div>
-        </td>
-        <td>
-          <div class="bar-cell">
-            <span class="pct-pill col-n">${nPct}%</span>
-            <div class="mini-bar-wrap"><div class="mini-bar mini-bar-n" style="width:${nPct}%"></div></div>
-          </div>
-        </td>
-        <td>${hasData ? winBadge : '-'}</td>
-      </tr>`;
-
-    const xBase = 30 + (d - 1) * (barWidth * 2 + gap);
-    const pHeight = pPct * 1.5;
-    const nHeight = nPct * 1.5;
-    svgBars += `
-      <rect x="${xBase}" y="${160 - pHeight}" width="${barWidth}" height="${pHeight}" fill="var(--pp)" rx="2" />
-      <rect x="${xBase + barWidth + 2}" y="${160 - nHeight}" width="${barWidth}" height="${nHeight}" fill="var(--nn)" rx="2" />
-      <text x="${xBase + barWidth}" y="175" font-size="10" fill="var(--text-3)" text-anchor="middle">${d}</text>
-    `;
-  }
-
-  tbody.innerHTML = tableHtml;
-
-  chartWrap.innerHTML = `
-    <svg width="${svgWidth}" height="190" style="display:block; margin:0 auto;">
-      <line x1="20" y1="160" x2="${svgWidth - 20}" y2="160" stroke="var(--border-mid)" stroke-width="1"/>
-      <line x1="20" y1="85" x2="${svgWidth - 20}" y2="85" stroke="var(--border)" stroke-dasharray="4,4"/>
-      <line x1="20" y1="10" x2="${svgWidth - 20}" y2="10" stroke="var(--border)" stroke-dasharray="4,4"/>
-      ${svgBars}
-    </svg>
-  `;
-
-  const pAvg = daysWithData ? Math.round(pTotalPct / daysWithData) : 0;
-  const nAvg = daysWithData ? Math.round(nTotalPct / daysWithData) : 0;
-  document.getElementById("stat-cards").innerHTML = `
-    <div class="stat-card"><div class="stat-card-label">เฉลี่ย ปังปอนด์</div><div class="stat-val col-p">${pAvg}%</div></div>
-    <div class="stat-card"><div class="stat-card-label">เฉลี่ย ${state.personNames.n}</div><div class="stat-val col-n">${nAvg}%</div></div>
-    <div class="stat-card"><div class="stat-card-label">ชนะ (วัน)</div><div class="stat-val" style="font-size:16px"><span class="pct-p">ป: ${pWins}</span> / <span class="pct-n">น: ${nWins}</span></div></div>
-    <div class="stat-card"><div class="stat-card-label">บันทึกแล้ว</div><div class="stat-val">${daysWithData} วัน</div></div>
-  `;
-}
-
-// ── SCHEDULE SYSTEM WITH DRAG & DROP ─────────────────
-let scheduleUnsubs = { p: null, n: null };
-
-function renderScheduleView() {
-  ['p', 'n'].forEach(who => {
-    if (scheduleUnsubs[who]) { scheduleUnsubs[who](); scheduleUnsubs[who] = null; }
-    
-    const listEl = document.getElementById(`schedule-list-${who}`);
-    if (!listEl) return;
-
-    const r = ref(db, `schedules/${who}`);
-    scheduleUnsubs[who] = onValue(r, snap => {
-      const val = snap.val() || {};
-      state.scheduleData[who] = val;
-      
-      // Sort elements by 'index' property (assigned on drag) or default by 'time'
-      const items = Object.keys(val).map(k => ({ id: k, ...val[k] })).sort((a, b) => {
-        if (a.index !== undefined && b.index !== undefined) return a.index - b.index;
-        return a.time.localeCompare(b.time);
-      });
-
-      let html = "";
-      if (state.showInputs[who]) {
-        html += `
-          <div class="schedule-input-row">
-            <input type="text" id="sched-in-time-${who}" class="schedule-time-input" placeholder="07:00" value="07:00">
-            <input type="text" id="sched-in-text-${who}" class="schedule-text-input" placeholder="กิจกรรมใหม่...">
-            <button class="schedule-save-btn" onclick="saveNewScheduleItem('${who}')">บันทึก</button>
-            <button class="schedule-cancel-btn" onclick="toggleScheduleInput('${who}', false)">ยกเลิก</button>
-          </div>`;
-      }
-
-      if (items.length === 0 && !state.showInputs[who]) {
-        html += `<div style="padding:30px; text-align:center; color:var(--text-3); font-size:13px;">ไม่มีรายการในตาราง</div>`;
-      } else {
-        items.forEach(item => {
-          const checkedClass = item.done ? "checked" : "";
-          const doneClass = item.done ? "done" : "";
-          const chkBorderColor = who === 'p' ? 'var(--pp)' : 'var(--nn)';
-          const chkBgColor = item.done ? chkBorderColor : 'transparent';
-          
-          html += `
-            <div class="schedule-item ${doneClass}" 
-                 draggable="true" 
-                 data-id="${item.id}" 
-                 data-who="${who}"
-                 ondragstart="handleDragStart(event)" 
-                 ondragover="handleDragOver(event)" 
-                 onblockdrop="handleDrop(event)"
-                 ondragend="handleDragEnd(event)"
-                 onclick="toggleScheduleItem('${who}', '${item.id}', ${!item.done})">
-              <div class="schedule-checkbox ${checkedClass}" style="border-color: ${chkBorderColor}; background-color: ${chkBgColor}; color: #fff;">${item.done ? '✓' : ''}</div>
-              <div class="schedule-time">${item.time}</div>
-              <div class="schedule-text">${item.text}</div>
-              <div class="schedule-actions">
-                <button class="schedule-btn" onclick="event.stopPropagation(); deleteScheduleItem('${who}', '${item.id}')">🗑️</button>
-              </div>
-            </div>`;
-        });
-      }
-      listEl.innerHTML = html;
-      attachDropListeners(listEl);
-    });
-  });
-}
-
-window.toggleScheduleInput = function(who, show) {
-  state.showInputs[who] = show;
-  renderScheduleView();
-};
-
-window.saveNewScheduleItem = async function(who) {
-  const time = document.getElementById(`sched-in-time-${who}`).value.trim();
-  const text = document.getElementById(`sched-in-text-${who}`).value.trim();
-  if (!time || !text) return;
-  
-  const currentItemsCount = Object.keys(state.scheduleData[who] || {}).length;
-  const newRef = ref(db, `schedules/${who}/${Date.now()}`);
-  
-  setSyncStatus('syncing');
-  await set(newRef, { time, text, done: false, index: currentItemsCount });
-  setSyncStatus('online');
-  
-  state.showInputs[who] = false;
-  renderScheduleView();
-};
-
-window.toggleScheduleItem = async function(who, id, doneState) {
-  setSyncStatus('syncing');
-  await set(ref(db, `schedules/${who}/${id}/done`), doneState);
-  setSyncStatus('online');
-};
-
-window.deleteScheduleItem = async function(who, id) {
-  if (!confirm("ต้องการลบรายการนี้ใช่หรือไม่?")) return;
-  setSyncStatus('syncing');
-  await set(ref(db, `schedules/${who}/${id}`), null);
-  setSyncStatus('online');
-};
-
-// ── HTML5 DRAG AND DROP HANDLERS ─────────────────────
-let dragSourceEl = null;
-
-window.handleDragStart = function(e) {
-  dragSourceEl = e.currentTarget;
-  e.currentTarget.style.opacity = '0.4';
-  e.dataTransfer.effectAllowed = 'move';
-  e.dataTransfer.setData('text/plain', e.currentTarget.getAttribute('data-id'));
-};
-
-window.handleDragOver = function(e) {
-  if (e.preventDefault) e.preventDefault();
-  return false;
-};
-
-window.handleDragEnd = function(e) {
-  e.currentTarget.style.opacity = '1';
-};
-
-function attachDropListeners(container) {
-  container.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    const afterElement = getDragAfterElement(container, e.clientY);
-    const draggingItem = document.querySelector('[draggable="true"][style*="opacity: 0.4"]');
-    if (!draggingItem) return;
-    
-    // Check if dragging within same profile column
-    if (draggingItem.getAttribute('data-who') !== container.id.replace('schedule-list-', '')) return;
-
-    if (afterElement == null) {
-      container.appendChild(draggingItem);
-    } else {
-      container.insertBefore(draggingItem, afterElement);
-    }
-  });
-
-  container.addEventListener('drop', async (e) => {
-    e.preventDefault();
-    const who = container.id.replace('schedule-list-', '');
-    const reorderedNodes = Array.from(container.querySelectorAll('.schedule-item'));
-    
+const noteTimers={};
+async function saveNote(y,m,d,who,id,val){
+  state.cache[nKey(y,m,d,who,id)]=val;
+  clearTimeout(noteTimers[id]);
+  const meta=document.getElementById(`note-meta-${id}`);
+  if(meta) meta.textContent='กำลังบันทึก...';
+  noteTimers[id]=setTimeout(async()=>{
     setSyncStatus('syncing');
-    for (let i = 0; i < reorderedNodes.length; i++) {
-      const id = reorderedNodes[i].getAttribute('data-id');
-      if (state.scheduleData[who] && state.scheduleData[who][id]) {
-        state.scheduleData[who][id].index = i;
-        await set(ref(db, `schedules/${who}/${id}/index`), i);
-      }
-    }
-    setSyncStatus('online');
-  });
-}
-
-function getDragAfterElement(container, y) {
-  const draggableElements = [...container.querySelectorAll('.schedule-item:not([style*="opacity: 0.4"])')];
-  return draggableElements.reduce((closest, child) => {
-    const box = child.getBoundingClientRect();
-    const offset = y - box.top - box.height / 2;
-    if (offset < 0 && offset > closest.offset) {
-      return { offset: offset, element: child };
-    } else {
-      return closest;
-    }
-  }, { offset: Number.NEGATIVE_INFINITY }).element;
-}
-
-// ── CALENDAR & SIDEBAR SYSTEM ────────────────────────
-function renderCalendar() {
-  const grid = document.getElementById("cal-grid");
-  const label = document.getElementById("cal-month-label");
-  if (!grid || !label) return;
-
-  label.textContent = `${THAI_MONTHS[state.month]} ${state.year + 543}`;
-  let html = THAI_DAYS_S.map(d => `<div class="cal-dn">${d}</div>`).join('');
-
-  const firstDay = new Date(state.year, state.month, 1).getDay();
-  const totalDays = new Date(state.year, state.month + 1, 0).getDate();
-
-  for (let i = 0; i < firstDay; i++) html += `<div class="cal-d empty"></div>`;
-
-  for (let d = 1; d <= totalDays; d++) {
-    const isToday = state.year === TODAY.getFullYear() && state.month === TODAY.getMonth() && d === TODAY.getDate();
-    const isSelected = state.year === state.year && state.month === state.month && d === state.day;
-    
-    const pDone = state.cache[cKey(state.year, state.month, d, 'p')] || [];
-    const nDone = state.cache[cKey(state.year, state.month, d, 'n')] || [];
-
-    let dotsHtml = '<div class="dots">';
-    if (pDone.length > 0) dotsHtml += '<div class="dot dot-p"></div>';
-    if (nDone.length > 0) dotsHtml += '<div class="dot dot-n"></div>';
-    dotsHtml += '</div>';
-
-    const cls = `cal-d ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}`;
-    html += `<div class="${cls}" onclick="selectDate(${d})"><div>${d}</div>${dotsHtml}</div>`;
-  }
-  grid.innerHTML = html;
-}
-
-function updateSidebarStats() {
-  ['p', 'n'].forEach(who => {
-    const doneList = state.cache[cKey(state.year, state.month, state.day, who)] || [];
-    const pct = HABITS.length ? Math.round((doneList.length / HABITS.length) * 100) : 0;
-    
-    const pctEl = document.getElementById(`pct-${who}`);
-    const barEl = document.getElementById(`pbar-${who}`);
-    if (pctEl) pctEl.textContent = `${pct}%`;
-    if (barEl) barEl.style.width = `${pct}%`;
-  });
-}
-
-// ── APP LIFECYCLE & EVENTS ───────────────────────────
-window.setView = function(v) {
-  state.view = v;
-  localStorage.setItem('dh_view', v); // Save to LocalStorage
-  ['single', 'compare', 'summary', 'schedule'].forEach(t => {
-    const tabBtn = document.getElementById(`tab-${t}`);
-    const viewDiv = document.getElementById(`view-${t}`);
-    if (tabBtn) tabBtn.className = `nav-tab ${t === v ? 'active' : ''}`;
-    if (viewDiv) viewDiv.style.display = t === v ? 'block' : 'none';
-  });
-  renderAll();
-};
-
-window.setPerson = function(p) {
-  state.person = p;
-  localStorage.setItem('dh_person', p); // Save to LocalStorage
-  document.getElementById("pc-p").className = `p-card ${p === 'p' ? 'active-p' : ''}`;
-  document.getElementById("pc-n").className = `p-card ${p === 'n' ? 'active-n' : ''}`;
-  document.getElementById("btn-p").className = `ps-btn ${p === 'p' ? 'active-p' : ''}`;
-  document.getElementById("btn-n").className = `ps-btn ${p === 'n' ? 'active-n' : ''}`;
-  
-  const textarea = document.getElementById("daily-note-textarea");
-  const dn = state.cache[dnKey(state.year, state.month, state.day)] || {};
-  if (textarea) textarea.value = dn[p] || "";
-  
-  renderAll();
-};
-
-window.selectDate = function(d) {
-  state.day = d;
-  localStorage.setItem('dh_day', d); // Save to LocalStorage
-  const targetDate = new Date(state.year, state.month, d);
-  document.getElementById("date-title").textContent = `${d} ${THAI_MONTHS[state.month]} ${state.year + 543}`;
-  document.getElementById("date-sub").textContent = THAI_DAYS_L[targetDate.getDay()];
-  subscribeNotes(state.year, state.month, d, state.person);
-  renderAll();
-};
-
-window.changeMonth = function(dir) {
-  state.month += dir;
-  if (state.month > 11) { state.month = 0; state.year++; }
-  if (state.month < 0) { state.month = 11; state.year--; }
-  
-  localStorage.setItem('dh_month', state.month);
-  localStorage.setItem('dh_year', state.year);
-  
-  subscribeMonth(state.year, state.month);
-  renderAll();
-};
-
-window.toggleNoteArea = function(id) {
-  const wrap = document.getElementById(`wrap-${id}`);
-  if (wrap) wrap.classList.toggle("note-open");
-};
-
-let noteTimeouts = {};
-window.saveNote = function(id, val) {
-  const sEl = document.getElementById(`nsaved-${id}`);
-  if (sEl) sEl.textContent = "กำลังพิมพ์...";
-  clearTimeout(noteTimeouts[id]);
-  noteTimeouts[id] = setTimeout(async () => {
-    setSyncStatus('syncing');
-    await set(ref(db, notePath(state.year, state.month, state.day, state.person, id)), val || null);
-    setSyncStatus('online');
-    if (sEl) sEl.textContent = val ? "บันทึกแล้ว" : "";
-  }, 800);
-};
-
-function updateNoteBtnState(id) {
-  const btn = document.getElementById(`nbtn-${id}`);
-  const val = state.cache[nKey(state.year, state.month, state.day, state.person, id)] || "";
-  if (btn) btn.className = `note-btn ${val ? 'has-note' : ''}`;
-}
-
-let dailyNoteTimeout = null;
-const dailyNoteTextarea = document.getElementById("daily-note-textarea");
-if (dailyNoteTextarea) {
-  dailyNoteTextarea.addEventListener("input", (e) => {
-    const meta = document.getElementById("daily-note-meta");
-    if (meta) meta.textContent = "กำลังบันทึก...";
-    clearTimeout(dailyNoteTimeout);
-    dailyNoteTimeout = setTimeout(async () => {
-      setSyncStatus('syncing');
-      const curDn = state.cache[dnKey(state.year, state.month, state.day)] || {};
-      curDn[state.person] = e.target.value;
-      await set(ref(db, dailyNotePath(state.year, state.month, state.day)), curDn);
+    try{
+      await set(ref(db,notePath(y,m,d,who,id)), val||null);
       setSyncStatus('online');
-      updateDailyNoteMeta(curDn);
-    }, 800);
+      if(meta){ meta.textContent='บันทึกแล้ว ✓'; setTimeout(()=>{ if(meta)meta.textContent=''; },2000); }
+      const btn=document.getElementById(`note-btn-${id}`);
+      if(btn) btn.className='note-btn'+(val?` has-note`:'');
+    } catch(e){ setSyncStatus('offline'); if(meta) meta.textContent='บันทึกไม่สำเร็จ'; }
+  },800);
+}
+window.saveNote=saveNote;
+
+function toggleNote(id){
+  const wrap=document.getElementById(`habit-wrap-${id}`);
+  if(!wrap) return;
+  const isOpen=wrap.classList.contains('note-open');
+  wrap.classList.toggle('note-open',!isOpen);
+  if(!isOpen){
+    const ta=document.getElementById(`note-ta-${id}`);
+    if(ta){ ta.focus(); autoResize(ta); }
+  }
+}
+window.toggleNote=toggleNote;
+
+function autoResize(ta){
+  ta.style.height='auto';
+  ta.style.height=ta.scrollHeight+'px';
+}
+window.autoResize=autoResize;
+
+function getNote(y,m,d,who,id){ return state.cache[nKey(y,m,d,who,id)]||''; }
+
+// ── DAILY NOTES ──────────────────────────────────────
+let dailyNoteUnsub=null;
+function unsubDailyNote(){ dailyNoteUnsub && dailyNoteUnsub(); dailyNoteUnsub=null; }
+
+function subscribeDailyNote(y,m,d){
+  unsubDailyNote();
+  const r=ref(db,dailyNotePath(y,m,d));
+  dailyNoteUnsub=onValue(r,snap=>{
+    state.cache[dnKey(y,m,d)]=snap.val()||'';
+    const ta=document.getElementById('daily-note-textarea');
+    if(ta && document.activeElement!==ta){
+      ta.value=snap.val()||'';
+    }
   });
 }
 
-function updateDailyNoteMeta(dnObj) {
-  const meta = document.getElementById("daily-note-meta");
-  if (!meta) return;
-  const keys = Object.keys(dnObj).filter(k => dnObj[k]);
-  if (keys.length === 0) meta.textContent = "";
-  else {
-    const names = keys.map(k => k === 'p' ? 'ปังปอนด์' : state.personNames.n);
-    meta.textContent = `บันทึกแล้วโดย: ${names.join(', ')}`;
-  }
+const dailyNoteTimer={};
+async function saveDailyNote(y,m,d,val){
+  state.cache[dnKey(y,m,d)]=val;
+  clearTimeout(dailyNoteTimer.id);
+  const meta=document.getElementById('daily-note-meta');
+  if(meta) meta.textContent='กำลังบันทึก...';
+  dailyNoteTimer.id=setTimeout(async()=>{
+    setSyncStatus('syncing');
+    try{
+      await set(ref(db,dailyNotePath(y,m,d)), val||null);
+      setSyncStatus('online');
+      if(meta){ meta.textContent='บันทึกแล้ว ✓'; setTimeout(()=>{ if(meta)meta.textContent=''; },2000); }
+    } catch(e){ setSyncStatus('offline'); if(meta) meta.textContent='บันทึกไม่สำเร็จ'; }
+  },800);
+}
+window.saveDailyNote=saveDailyNote;
+
+function getDailyNote(y,m,d){ return state.cache[dnKey(y,m,d)]||''; }
+
+// ── SCHEDULE ──────────────────────────────────────
+let scheduleCurrentPerson='p';
+function schedulePath(y,m,d){ return `schedules/${y}_${String(m+1).padStart(2,'0')}_${String(d).padStart(2,'0')}`; }
+function sKey(y,m,d,who){ return `s_${y}_${m}_${d}_${who}`; }
+function schedulePersonNameKey(who){ return `sched_name_${who}`; }
+
+let scheduleUnsubs=[];
+function unsubSchedules(){ scheduleUnsubs.forEach(u=>u&&u()); scheduleUnsubs=[]; }
+
+function subscribeSchedules(y,m,d){
+  unsubSchedules();
+  ['p','n'].forEach(who=>{
+    const r=ref(db,schedulePath(y,m,d)+'/'+who);
+    const unsub=onValue(r,snap=>{
+      const val=snap.val();
+      state.cache[sKey(y,m,d,who)]={items:val||[], name:(val||{}).name || ''};
+      if(state.view==='schedule' && !state.showScheduleInput) renderSchedule();
+    });
+    scheduleUnsubs.push(unsub);
+  });
 }
 
-window.editPersonName = async function(who) {
-  const currentName = state.personNames[who] || "ช่องว่าง";
-  const newName = prompt(`แก้ไขชื่อของ "${currentName}" :`, currentName);
-  if (newName && newName.trim()) {
+function subscribeScheduleNames(){
+  ['p','n'].forEach(who=>{
+    const r=ref(db,'schedule_settings/'+who);
+    const unsub=onValue(r,snap=>{
+      const val=snap.val();
+      if(val && val.name) state.personNames[who+'_sched']=val.name;
+    });
+    scheduleUnsubs.push(unsub);
+  });
+}
+
+function setSchedulePerson(who){
+  scheduleCurrentPerson=who;
+  renderSchedule();
+}
+window.setSchedulePerson=setSchedulePerson;
+
+function saveSchedulePersonName(){
+  const input=document.getElementById('schedule-person-name');
+  if(!input) return;
+  const name=input.value.trim();
+  if(name){
     setSyncStatus('syncing');
-    await set(ref(db, personNamePath(who)), newName.trim());
+    set(ref(db,'schedule_settings/'+scheduleCurrentPerson), {name:name})
+      .then(()=>{ setSyncStatus('online'); renderSchedule(); })
+      .catch(()=>{ setSyncStatus('offline'); });
+  }
+}
+window.saveSchedulePersonName=saveSchedulePersonName;
+
+async function addScheduleItem(){
+  console.log('addScheduleItem called');
+  state.view='schedule';
+  state.showScheduleInput=true;
+  renderSchedule();
+  setTimeout(()=>{
+    const ti=document.getElementById('new-schedule-time');
+    if(ti) ti.focus();
+  },50);
+}
+window.addScheduleItem=addScheduleItem;
+
+async function saveScheduleItem(y,m,d,who,id,time,text){
+  setSyncStatus('syncing');
+  const key=sKey(y,m,d,who);
+  const data=state.cache[key]||{items:[], name:''};
+  const items=Array.isArray(data.items)?data.items:[];
+  const item=items.find(s=>s.id===id);
+  if(item){
+    item.time=time;
+    item.text=text;
+  }
+  try{
+    await set(ref(db,schedulePath(y,m,d)+'/'+who), {items:items.length?items:[], name:data.name||''});
     setSyncStatus('online');
+  } catch(e){ setSyncStatus('offline'); }
+}
+window.saveScheduleItem=saveScheduleItem;
+
+async function deleteScheduleItem(y,m,d,who,id){
+  setSyncStatus('syncing');
+  const key=sKey(y,m,d,who);
+  const data=state.cache[key]||{items:[]};
+  let items=Array.isArray(data.items)?data.items:[];
+  items=items.filter(s=>s.id!==id);
+  try{
+    await set(ref(db,schedulePath(y,m,d)+'/'+who), {items:items.length?items:[], name:data.name||''});
+    setSyncStatus('online');
+    renderSchedule();
+  } catch(e){ setSyncStatus('offline'); }
+}
+window.deleteScheduleItem=deleteScheduleItem;
+
+async function toggleScheduleItem(y,m,d,who,id){
+  setSyncStatus('syncing');
+  const key=sKey(y,m,d,who);
+  const data=state.cache[key]||{items:[]};
+  const items=Array.isArray(data.items)?data.items:[];
+  const item=items.find(s=>s.id===id);
+  if(item) item.done=!item.done;
+  try{
+    await set(ref(db,schedulePath(y,m,d)+'/'+who), {items:items.length?items:[], name:data.name||''});
+    setSyncStatus('online');
+    renderSchedule();
+  } catch(e){ setSyncStatus('offline'); }
+}
+window.toggleScheduleItem=toggleScheduleItem;
+
+async function moveScheduleItem(y,m,d,who,id,direction){
+  const key=sKey(y,m,d,who);
+  const data=state.cache[key]||{items:[]};
+  let items=Array.isArray(data.items)?data.items:[];
+  const idx=items.findIndex(s=>s.id===id);
+  if(idx===-1) return;
+  
+  if(direction==='up' && idx>0){
+    [items[idx], items[idx-1]]=[items[idx-1], items[idx]];
+  } else if(direction==='down' && idx<items.length-1){
+    [items[idx], items[idx+1]]=[items[idx+1], items[idx]];
+  }
+  
+  try{
+    await set(ref(db,schedulePath(y,m,d)+'/'+who), {items:items.length?items:[], name:data.name||''});
+    setSyncStatus('online');
+    renderSchedule();
+  } catch(e){ setSyncStatus('offline'); }
+}
+window.moveScheduleItem=moveScheduleItem;
+
+function renderSchedule(){
+  const {year,month,day}=state;
+  document.getElementById('tab-single').className='nav-tab';
+  document.getElementById('tab-compare').className='nav-tab';
+  document.getElementById('tab-summary').className='nav-tab';
+  document.getElementById('tab-schedule').className='nav-tab active';
+  document.getElementById('view-single').style.display='none';
+  document.getElementById('view-compare').style.display='none';
+  document.getElementById('view-summary').style.display='none';
+  document.getElementById('view-schedule').style.display='';
+  document.getElementById('daily-note-box').style.display='none';
+  document.getElementById('date-header').style.display='none';
+
+  // Update tab buttons
+  document.getElementById('schedule-tab-p').className='schedule-tab-btn'+(scheduleCurrentPerson==='p'?' active':'');
+  document.getElementById('schedule-tab-n').className='schedule-tab-btn'+(scheduleCurrentPerson==='n'?' active':'');
+  
+  const key=sKey(year,month,day,scheduleCurrentPerson);
+  const data=state.cache[key]||{items:[], name:''};
+  const schedules=Array.isArray(data.items)?data.items:[];
+  
+  // Update name input
+  const nameInput=document.getElementById('schedule-person-name');
+  if(nameInput) nameInput.value=data.name||'';
+  
+  let html='';
+  if(state.showScheduleInput){
+    html+=`<div class="schedule-input-row" id="schedule-input-row">
+      <input type="text" id="new-schedule-time" class="schedule-time-input" placeholder="เวลา" maxlength="5" style="width:60px">
+      <input type="text" id="new-schedule-text" class="schedule-text-input" placeholder="รายการ" autofocus>
+      <button class="schedule-save-btn" onclick="finishAddSchedule(${year},${month},${day},'${scheduleCurrentPerson}')">บันทึก</button>
+      <button class="schedule-cancel-btn" onclick="cancelAddSchedule()">ยกเลิก</button>
+    </div>`;
+  }
+  
+  schedules.forEach((s,i)=>{
+    const checked=s.done?' checked':'';
+    html+=`<div class="schedule-item${s.done?' done':''}" onclick="toggleScheduleItem(${year},${month},${day},'${scheduleCurrentPerson}',${s.id})">
+      <div class="schedule-checkbox${checked}">
+        ${s.done?'✓':''}
+      </div>
+      <span class="schedule-time">${s.time}</span>
+      <span class="schedule-text">${s.text}</span>
+      <div class="schedule-actions">
+        ${i>0?`<button class="schedule-btn" onclick="event.stopPropagation();moveScheduleItem(${year},${month},${day},'${scheduleCurrentPerson}',${s.id},'up')" title="ขึ้น">↑</button>`:''}
+        ${i<schedules.length-1?`<button class="schedule-btn" onclick="event.stopPropagation();moveScheduleItem(${year},${month},${day},'${scheduleCurrentPerson}',${s.id},'down')" title="ลง">↓</button>`:''}
+        <button class="schedule-btn" onclick="event.stopPropagation();editScheduleItem(${year},${month},${day},'${scheduleCurrentPerson}',${s.id})" title="แก้ไข">✏️</button>
+        <button class="schedule-btn" onclick="event.stopPropagation();deleteScheduleItem(${year},${month},${day},'${scheduleCurrentPerson}',${s.id})" title="ลบ">🗑️</button>
+      </div>
+    </div>`;
+  });
+  
+  document.getElementById('schedule-list').innerHTML=html;
+}
+
+function finishAddSchedule(y,m,d,who){
+  const time=document.getElementById('new-schedule-time').value||'';
+  const text=document.getElementById('new-schedule-text').value||'';
+  if(time.trim() && text.trim()){
+    const key=sKey(y,m,d,who);
+    const data=state.cache[key]||{items:[], name:''};
+    const items=Array.isArray(data.items)?data.items:[];
+    const newItem={id:Date.now(),time:time.trim(),text:text.trim(),done:false};
+    items.push(newItem);
+    state.cache[key]={items:items, name:data.name||''};
+    state.showScheduleInput=false;
+    saveScheduleItem(y,m,d,who,newItem.id,time.trim(),text.trim());
+  }
+}
+window.finishAddSchedule=finishAddSchedule;
+
+function cancelAddSchedule(){
+  state.showScheduleInput=false;
+  renderSchedule();
+}
+window.cancelAddSchedule=cancelAddSchedule;
+
+function editScheduleItem(y,m,d,who,id){
+  const key=sKey(y,m,d,who);
+  const data=state.cache[key]||{items:[]};
+  const items=Array.isArray(data.items)?data.items:[];
+  const item=items.find(s=>s.id===id);
+  if(item){
+    const newTime=prompt('เวลา:',item.time);
+    if(newTime!==null){
+      const newText=prompt('รายการ:',item.text);
+      if(newText!==null){
+        saveScheduleItem(y,m,d,who,id,newTime.trim(),newText.trim());
+      }
+    }
+  }
+}
+window.editScheduleItem=editScheduleItem;
+
+// ── PERSON NAMES ──────────────────────────────────────
+let nameUnsubs=[];
+function unsubPersonNames(){ nameUnsubs.forEach(u=>u&&u()); nameUnsubs=[]; }
+
+function subscribePersonNames(){
+  unsubPersonNames();
+  ['p','n'].forEach(who=>{
+    const r=ref(db,personNamePath(who));
+    const unsub=onValue(r,snap=>{
+      const name=snap.val();
+      if(name) state.personNames[who]=name;
+      renderAll();
+    });
+    nameUnsubs.push(unsub);
+  });
+}
+
+async function setPersonName(who,newName){
+  if(!newName || newName.trim()=='') return;
+  setSyncStatus('syncing');
+  state.personNames[who]=newName;
+  renderAll();
+  try{
+    await set(ref(db,personNamePath(who)), newName);
+    setSyncStatus('online');
+  } catch(e){ setSyncStatus('offline'); }
+}
+window.setPersonName=setPersonName;
+
+function editPersonName(who){
+  const current=state.personNames[who]||'';
+  const newName=prompt(`เปลี่ยนชื่อ:\n(ปล่อยไว้ว่างให้ใช้ชื่อเดิม)`, current);
+  if(newName!==null && newName.trim()!=''){
+    setPersonName(who, newName.trim());
+  }
+}
+window.editPersonName=editPersonName;
+
+function getChecked(y,m,d,who){ return state.cache[cKey(y,m,d,who)]||[]; }
+function countDay(y,m,d,who){ return getChecked(y,m,d,who).length; }
+function pctDay(y,m,d,who){ return Math.round(countDay(y,m,d,who)/29*100); }
+
+/* ── NAV ──────────────────────────────────────────── */
+window.changeMonth=function(dir){
+  state.month+=dir;
+  if(state.month>11){state.month=0;state.year++}
+  if(state.month<0){state.month=11;state.year--}
+  subscribeMonth(state.year,state.month);
+};
+window.setView=function(v){ state.view=v; renderAll(); };
+window.setPerson=function(p){ state.person=p; renderAll(); };
+window.selectDay=function(d){ 
+  state.day=d; 
+  renderAll(); 
+  if(state.view==='single'){
+    subscribeNotes(state.year,state.month,d,state.person);
+    subscribeDailyNote(state.year,state.month,d);
+  } else if(state.view==='schedule'){
+    subscribeSchedules(state.year,state.month,d);
   }
 };
 
-// Global Name Syncing
-onValue(ref(db, 'settings/person_names'), snap => {
-  const val = snap.val() || {};
-  state.personNames.p = val.p || "ปังปอนด์";
-  state.personNames.n = val.n || "ช่องว่าง";
-  
-  const els = {
-    'pname-p': state.personNames.p, 'pname-n': state.personNames.n,
-    'btn-p-name': state.personNames.p, 'btn-n-name': state.personNames.n,
-    'cmp-name-p': state.personNames.p, 'cmp-name-n': state.personNames.n,
-    'legend-name-p': state.personNames.p, 'legend-name-n': state.personNames.n,
-    'table-name-p': state.personNames.p, 'table-name-n': state.personNames.n,
-    'sched-title-p': state.personNames.p, 'sched-title-n': state.personNames.n
-  };
-  Object.keys(els).forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = els[id];
+/* ── RENDER HELPERS ───────────────────────────────── */
+function thaiDate(y,m,d){ return `${d} ${THAI_MONTHS[m]} ${y+543}`; }
+function thaiDow(y,m,d){ return 'วัน'+THAI_DAYS_L[new Date(y,m,d).getDay()]; }
+
+function renderCal(){
+  const {year,month,day}=state;
+  document.getElementById('cal-month-label').textContent=`${THAI_MONTHS[month]} ${year+543}`;
+  const first=new Date(year,month,1).getDay(), total=new Date(year,month+1,0).getDate();
+  let html=THAI_DAYS_S.map(d=>`<div class="cal-dn">${d}</div>`).join('');
+  for(let i=0;i<first;i++) html+=`<div class="cal-d empty"></div>`;
+  for(let d=1;d<=total;d++){
+    const isToday=d===TODAY.getDate()&&month===TODAY.getMonth()&&year===TODAY.getFullYear();
+    const isSel=d===day;
+    const cp=countDay(year,month,d,'p'),cn=countDay(year,month,d,'n');
+    const dots=(cp>0?`<div class="dot dot-p"></div>`:'')+( cn>0?`<div class="dot dot-n"></div>`:'');
+    html+=`<div class="cal-d${isSel?' selected':''}${isToday?' today':''}" onclick="selectDay(${d})">
+      <span>${d}</span><div class="dots">${dots}</div></div>`;
+  }
+  document.getElementById('cal-grid').innerHTML=html;
+  ['p','n'].forEach(who=>{
+    const pct=pctDay(year,month,day,who);
+    document.getElementById(`pct-${who}`).textContent=pct+'%';
+    document.getElementById(`pbar-${who}`).style.width=pct+'%';
+    document.getElementById(`pname-${who}`).textContent=state.personNames[who]||'';
   });
-  renderAll();
+  document.getElementById('pc-p').className='p-card'+(state.person==='p'?' active-p':'');
+  document.getElementById('pc-n').className='p-card'+(state.person==='n'?' active-n':'');
+}
+
+function renderSingle(){
+  unsubSchedules();
+  const {year,month,day,person}=state;
+  document.getElementById('tab-single').className='nav-tab active';
+  document.getElementById('tab-compare').className='nav-tab';
+  document.getElementById('tab-summary').className='nav-tab';
+  document.getElementById('tab-schedule').className='nav-tab';
+  document.getElementById('view-single').style.display='';
+  document.getElementById('view-compare').style.display='none';
+  document.getElementById('view-summary').style.display='none';
+  document.getElementById('view-schedule').style.display='none';
+  document.getElementById('daily-note-box').style.display='';
+  document.getElementById('date-header').style.display='';
+  document.getElementById('date-title').textContent=thaiDate(year,month,day);
+  document.getElementById('date-sub').textContent=thaiDow(year,month,day);
+  document.getElementById('btn-p').className='ps-btn'+(person==='p'?' active-p':'');
+  document.getElementById('btn-n').className='ps-btn'+(person==='n'?' active-n':'');
+  document.getElementById('btn-p-name').textContent=state.personNames.p||'ปังปอนด์';
+  document.getElementById('btn-n-name').textContent=state.personNames.n||'ช่องว่าง';
+
+  // Render daily note
+  const dailyNoteText=getDailyNote(year,month,day);
+  const dnTA=document.getElementById('daily-note-textarea');
+  if(dnTA && document.activeElement!==dnTA){
+    dnTA.value=dailyNoteText;
+  }
+
+  const checked=getChecked(year,month,day,person);
+  const bycat={};
+  HABITS.forEach(h=>{if(!bycat[h.cat])bycat[h.cat]=[];bycat[h.cat].push(h)});
+  let html='';
+  Object.entries(CATS).forEach(([cat,info])=>{
+    if(!bycat[cat]) return;
+    html+=`<div class="cat-block"><div class="cat-label" style="background:${info.bg};color:${info.color}">${info.label}</div><div class="items-grid">`;
+    bycat[cat].forEach(h=>{
+      const done=checked.includes(h.id);
+      const dc=done?(person==='p'?'done-p':'done-n'):'';
+      const cc=done?(person==='p'?'chk-p':'chk-n'):'';
+      const noteVal=getNote(year,month,day,person,h.id);
+      const hasNote=noteVal.length>0;
+      const noteBg=done?(person==='p'?'bg-p':'bg-n'):'';
+      const escaped=noteVal.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+      html+=`<div class="habit-wrap" id="habit-wrap-${h.id}">
+        <div class="habit ${dc}" onclick="toggle(${year},${month},${day},'${person}',${h.id})">
+          <div class="chk ${cc}">${done?'✓':''}</div>
+          <span class="habit-text">${h.text}</span>
+          <button class="note-btn${hasNote?' has-note':''}" id="note-btn-${h.id}"
+            onclick="event.stopPropagation();toggleNote(${h.id})" title="เพิ่มโน้ต">📝</button>
+        </div>
+        <div class="note-area ${noteBg}" id="note-area-${h.id}">
+          <textarea class="note-textarea" id="note-ta-${h.id}"
+            placeholder="เขียนโน้ตของวันนี้..."
+            oninput="autoResize(this);saveNote(${year},${month},${day},'${person}',${h.id},this.value)"
+            >${escaped}</textarea>
+          <div class="note-saved" id="note-meta-${h.id}"></div>
+        </div>
+      </div>`;
+    });
+    html+=`</div></div>`;
+  });
+  document.getElementById('habits-container').innerHTML=html;
+  document.querySelectorAll('.note-textarea').forEach(ta=>autoResize(ta));
+  subscribeNotes(year,month,day,person);
+  subscribeDailyNote(year,month,day);
+}
+
+function renderCompare(){
+  unsubNotes();
+  unsubDailyNote();
+  unsubSchedules();
+  const {year,month,day}=state;
+  document.getElementById('tab-single').className='nav-tab';
+  document.getElementById('tab-compare').className='nav-tab active';
+  document.getElementById('tab-summary').className='nav-tab';
+  document.getElementById('tab-schedule').className='nav-tab';
+  document.getElementById('view-single').style.display='none';
+  document.getElementById('view-compare').style.display='';
+  document.getElementById('view-summary').style.display='none';
+  document.getElementById('view-schedule').style.display='none';
+  document.getElementById('daily-note-box').style.display='none';
+  document.getElementById('date-header').style.display='';
+  document.getElementById('date-title').textContent=thaiDate(year,month,day);
+  document.getElementById('date-sub').textContent=thaiDow(year,month,day);
+
+  ['p','n'].forEach(who=>{
+    const checked=getChecked(year,month,day,who), cnt=checked.length;
+    document.getElementById(`cmp-name-${who}`).textContent=state.personNames[who]||'';
+    document.getElementById(`cmp-score-${who}`).textContent=`${cnt} / 29`;
+    document.getElementById(`cmp-bar-${who}`).style.width=Math.round(cnt/29*100)+'%';
+    let html='';
+    HABITS.forEach(h=>{
+      const done=checked.includes(h.id);
+      html+=`<div class="cmp-item ${done?'done-'+who:''}" onclick="toggle(${year},${month},${day},'${who}',${h.id})">
+        <div class="cmp-chk ${done?'chk-'+who:''}">${done?'✓':''}</div>
+        <span class="cmp-text">${h.text}</span></div>`;
+    });
+    document.getElementById(`cmp-list-${who}`).innerHTML=html;
+  });
+}
+
+function renderSummary(){
+  unsubNotes();
+  unsubDailyNote();
+  unsubSchedules();
+  const {year,month}=state;
+  document.getElementById('tab-single').className='nav-tab';
+  document.getElementById('tab-compare').className='nav-tab';
+  document.getElementById('tab-summary').className='nav-tab active';
+  document.getElementById('tab-schedule').className='nav-tab';
+  document.getElementById('view-single').style.display='none';
+  document.getElementById('view-compare').style.display='none';
+  document.getElementById('view-summary').style.display='';
+  document.getElementById('view-schedule').style.display='none';
+  document.getElementById('daily-note-box').style.display='none';
+  document.getElementById('date-header').style.display='none';
+
+  // Update names
+  document.getElementById('legend-name-p').textContent=state.personNames.p||'ปังปอนด์';
+  document.getElementById('legend-name-n').textContent=state.personNames.n||'ช่องว่าง';
+  document.getElementById('table-name-p').textContent=state.personNames.p||'ปังปอนด์';
+  document.getElementById('table-name-n').textContent=state.personNames.n||'ช่องว่าง';
+
+  document.getElementById('sum-title').textContent=`สรุปเดือน${THAI_MONTHS[month]} ${year+543}`;
+
+  const total=new Date(year,month+1,0).getDate();
+  const todayInMonth = (year===TODAY.getFullYear()&&month===TODAY.getMonth()) ? TODAY.getDate() : total;
+
+  let sumP=0,sumN=0,daysWithDataP=0,daysWithDataN=0,winsP=0,winsN=0,ties=0;
+  const rows=[];
+  for(let d=1;d<=total;d++){
+    const pp=pctDay(year,month,d,'p'), pn=pctDay(year,month,d,'n');
+    const hasP=countDay(year,month,d,'p')>0, hasN=countDay(year,month,d,'n')>0;
+    if(hasP){sumP+=pp;daysWithDataP++}
+    if(hasN){sumN+=pn;daysWithDataN++}
+    const w = (!hasP&&!hasN)?'none': pp>pn?'p': pn>pp?'n':'tie';
+    if(w==='p')winsP++; else if(w==='n')winsN++; else if(w==='tie'&&(hasP||hasN))ties++;
+    rows.push({d,pp,pn,hasP,hasN,w});
+  }
+  const avgP=daysWithDataP?Math.round(sumP/daysWithDataP):0;
+  const avgN=daysWithDataN?Math.round(sumN/daysWithDataN):0;
+  const bestDayP=rows.filter(r=>r.hasP).reduce((a,b)=>b.pp>a.pp?b:a,{pp:-1,d:'-'});
+  const bestDayN=rows.filter(r=>r.hasN).reduce((a,b)=>b.pn>a.pn?b:a,{pn:-1,d:'-'});
+
+  const nameP=state.personNames.p||'ปังปอนด์';
+  const nameN=state.personNames.n||'ช่องว่าง';
+  document.getElementById('stat-cards').innerHTML=`
+    <div class="stat-card">
+      <div class="stat-card-label">เฉลี่ยต่อวัน</div>
+      <div class="stat-card-row">
+        <div><div class="stat-who">${nameP}</div><div class="stat-val col-p">${avgP}%</div></div>
+        <div><div class="stat-who">${nameN}</div><div class="stat-val col-n">${avgN}%</div></div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">วันที่ดีที่สุด</div>
+      <div class="stat-card-row">
+        <div><div class="stat-who">${nameP}</div><div class="stat-val col-p">${bestDayP.pp>=0?bestDayP.d:'-'}</div></div>
+        <div><div class="stat-who">${nameN}</div><div class="stat-val col-n">${bestDayN.pn>=0?bestDayN.d:'-'}</div></div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">วันที่บันทึก</div>
+      <div class="stat-card-row">
+        <div><div class="stat-who">${nameP}</div><div class="stat-val col-p">${daysWithDataP}</div></div>
+        <div><div class="stat-who">${nameN}</div><div class="stat-val col-n">${daysWithDataN}</div></div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">จำนวนวันที่ชนะ</div>
+      <div class="stat-card-row">
+        <div><div class="stat-who">${nameP}</div><div class="stat-val col-p">${winsP}</div></div>
+        <div><div class="stat-who">${nameN}</div><div class="stat-val col-n">${winsN}</div></div>
+      </div>
+    </div>`;
+
+  const W=Math.max(total*22+60, 600), H=160, padL=36, padB=24, padT=10;
+  const chartH=H-padB-padT, barW=8, gap=14;
+  const scaleY=v=>(chartH - (v/100)*chartH) + padT;
+  let svgLines='', svgBars='', svgLabels='';
+  [0,25,50,75,100].forEach(v=>{
+    const y=scaleY(v);
+    svgLines+=`<line x1="${padL}" x2="${W}" y1="${y}" y2="${y}" stroke="#E5E5E5" stroke-width="1"/>`;
+    svgLines+=`<text x="${padL-4}" y="${y+4}" text-anchor="end" fill="#BBB" font-size="10">${v}</text>`;
+  });
+  rows.forEach(({d,pp,pn,hasP,hasN},i)=>{
+    const x=padL+i*(barW*2+gap+4);
+    const yP=scaleY(pp), yN=scaleY(pn);
+    const hP=chartH-(pp/100)*chartH, hN=chartH-(pn/100)*chartH;
+    const isToday=d===TODAY.getDate()&&month===TODAY.getMonth()&&year===TODAY.getFullYear();
+    svgBars+=`<rect x="${x}" y="${yP}" width="${barW}" height="${hP}" rx="2" fill="${hasP?'#7C5CBF':'#E5E5E5'}" opacity="${isToday?1:.85}"/>`;
+    svgBars+=`<rect x="${x+barW+2}" y="${yN}" width="${barW}" height="${hN}" rx="2" fill="${hasN?'#D45F7F':'#E5E5E5'}" opacity="${isToday?1:.85}"/>`;
+    if(d===1||d%5===0||d===total){
+      svgLabels+=`<text x="${x+barW}" y="${H-6}" text-anchor="middle" fill="#AAA" font-size="10">${d}</text>`;
+    }
+  });
+  document.getElementById('chart-svg-wrap').innerHTML=
+    `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;min-width:${W}px;display:block">
+      ${svgLines}${svgBars}${svgLabels}
+    </svg>`;
+
+  let tbody='';
+  if(!rows.some(r=>r.hasP||r.hasN)){
+    tbody=`<tr class="no-data-row"><td colspan="5">ยังไม่มีข้อมูลในเดือนนี้</td></tr>`;
+  } else {
+    rows.forEach(({d,pp,pn,hasP,hasN,w})=>{
+      if(!hasP&&!hasN) return;
+      const isToday=d===TODAY.getDate()&&month===TODAY.getMonth()&&year===TODAY.getFullYear();
+      const dow=THAI_DAYS_S[new Date(year,month,d).getDay()];
+      const winBadge = w==='p'?`<span class="winner-badge win-p">${nameP}</span>`:
+                       w==='n'?`<span class="winner-badge win-n">${nameN}</span>`:
+                       w==='tie'?`<span class="winner-badge win-tie">เสมอ</span>`:``;
+      const pillP=hasP?`<span class="pct-pill col-p">${pp}%</span>`:`<span class="pct-pill empty">-</span>`;
+      const pillN=hasN?`<span class="pct-pill col-n">${pn}%</span>`:`<span class="pct-pill empty">-</span>`;
+      tbody+=`<tr${isToday?' class="is-today"':''}>
+        <td><span class="day-num">${d}</span></td>
+        <td><span class="day-dow">${dow}</span></td>
+        <td><div class="bar-cell">${pillP}<div class="mini-bar-wrap"><div class="mini-bar mini-bar-p" style="width:${pp}%"></div></div></div></td>
+        <td><div class="bar-cell">${pillN}<div class="mini-bar-wrap"><div class="mini-bar mini-bar-n" style="width:${pn}%"></div></div></div></td>
+        <td>${winBadge}</td>
+      </tr>`;
+    });
+  }
+  document.getElementById('day-tbody').innerHTML=tbody;
+}
+
+function renderAll(){
+  renderCal();
+  if(state.view==='single') renderSingle();
+  else if(state.view==='compare') renderCompare();
+  else if(state.view==='summary') renderSummary();
+  else if(state.view==='schedule') renderSchedule();
+}
+
+/* ── INIT ─────────────────────────────────────────── */
+subscribeMonth(state.year, state.month);
+subscribePersonNames();
+subscribeScheduleNames();
+setSyncStatus('online');
+renderAll();
+
+// Setup daily note textarea event listener
+document.getElementById('daily-note-textarea').addEventListener('input', function(){
+  saveDailyNote(state.year, state.month, state.day, this.value);
 });
 
-// INITIALIZATION
-(function init() {
-  document.getElementById("loading-overlay").style.opacity = '0';
-  setTimeout(() => document.getElementById("loading-overlay").style.display = 'none', 300);
-  setSyncStatus('online');
-  
-  // Restore view from cache
-  setView(state.view);
-  setPerson(state.person);
-  selectDate(state.day);
-  subscribeMonth(state.year, state.month);
-})();
+// Initial daily note load
+subscribeDailyNote(state.year, state.month, state.day);
+
+// Initial schedule load
+subscribeSchedules(state.year, state.month, state.day);
+
+document.getElementById('loading-overlay').style.opacity='0';
+setTimeout(()=>{ document.getElementById('loading-overlay').style.display='none'; },350);
 </script>
 </body>
 </html>
