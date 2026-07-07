@@ -629,21 +629,26 @@ function subscribeSchedule(y,m,d){
   const r=ref(db,schedulePath(y,m,d));
   scheduleUnsub=onValue(r,snap=>{
     const val=snap.val();
-    state.cache[sKey(y,m,d)]=val||[];
-    if(state.view==='schedule') renderSchedule();
+    const key=sKey(y,m,d);
+    // ไม่เขียนทับ cache เมื่อ state.showScheduleInput = true (ยังกำลังเพิ่มรายการ)
+    if(!state.showScheduleInput){
+      state.cache[key]=val||[];
+    }
+    if(state.view==='schedule' && !state.showScheduleInput) renderSchedule();
   });
 }
 
 async function addScheduleItem(){
-  const {year,month,day}=state;
-  const key=sKey(year,month,day);
-  const schedules=state.cache[key]||[];
-  const newItem={id:Date.now(),time:'',text:'',done:false};
-  schedules.push(newItem);
-  state.cache[key]=schedules;
+  console.log('addScheduleItem called');
+  state.view='schedule';
   state.showScheduleInput=true;
-  renderSchedule();
+  renderAll();
+  setTimeout(()=>{
+    const ti=document.getElementById('new-schedule-time');
+    if(ti) ti.focus();
+  },50);
 }
+window.addScheduleItem=addScheduleItem;
 
 async function saveScheduleItem(y,m,d,id,time,text){
   setSyncStatus('syncing');
@@ -704,7 +709,7 @@ function renderSchedule(){
   document.getElementById('view-schedule').style.display='';
   document.getElementById('daily-note-box').style.display='none';
   document.getElementById('date-header').style.display='none';
-
+  
   const key=sKey(year,month,day);
   const schedules=state.cache[key]||[];
   
@@ -734,7 +739,6 @@ function renderSchedule(){
   });
   
   document.getElementById('schedule-list').innerHTML=html;
-  subscribeSchedule(year,month,day);
 }
 
 function finishAddSchedule(y,m,d){
@@ -743,13 +747,11 @@ function finishAddSchedule(y,m,d){
   if(time.trim() && text.trim()){
     const key=sKey(y,m,d);
     const schedules=[...(state.cache[key]||[])];
-    if(schedules.length>0 && !schedules[schedules.length-1].time){
-      schedules[schedules.length-1].time=time;
-      schedules[schedules.length-1].text=text;
-      saveScheduleItem(y,m,d,schedules[schedules.length-1].id,time,text);
-    }
+    const newItem={id:Date.now(),time:time.trim(),text:text.trim(),done:false};
+    schedules.push(newItem);
+    state.cache[key]=schedules;
     state.showScheduleInput=false;
-    renderSchedule();
+    saveScheduleItem(y,m,d,newItem.id,time.trim(),text.trim());
   }
 }
 window.finishAddSchedule=finishAddSchedule;
@@ -1117,6 +1119,9 @@ document.getElementById('daily-note-textarea').addEventListener('input', functio
 
 // Initial daily note load
 subscribeDailyNote(state.year, state.month, state.day);
+
+// Initial schedule load
+subscribeSchedule(state.year, state.month, state.day);
 
 document.getElementById('loading-overlay').style.opacity='0';
 setTimeout(()=>{ document.getElementById('loading-overlay').style.display='none'; },350);
