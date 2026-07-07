@@ -245,6 +245,13 @@
   .schedule-save-btn:hover{background:var(--pp-mid)}
   .schedule-cancel-btn{padding:8px 14px;background:var(--border);color:var(--text-2);border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;transition:all .15s}
   .schedule-cancel-btn:hover{background:var(--border-mid)}
+  .schedule-drag-handle{cursor:grab;color:var(--text-3);font-size:14px;flex-shrink:0;padding:2px 2px;line-height:1;touch-action:none}
+  .schedule-drag-handle:active{cursor:grabbing}
+  .schedule-item{position:relative}
+  .schedule-item.dragging{opacity:.4}
+  .schedule-item.drag-over-top{box-shadow:inset 0 2px 0 var(--pp)}
+  .schedule-item.drag-over-bottom{box-shadow:inset 0 -2px 0 var(--pp)}
+  .schedule-empty{font-size:13px;color:var(--text-3);text-align:center;padding:16px 8px}
 
   @media(max-width:700px){
     .main{grid-template-columns:1fr;padding:16px}
@@ -394,26 +401,28 @@
         <div class="schedule-container">
           <div class="schedule-header">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-              <!-- ปังปอนด์ -->
+              <!-- ป -->
               <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
                   <div class="ps-avatar av-p">ป</div>
-                  <span id="sched-name-p-edit" style="font-size:15px;font-weight:600;cursor:pointer;color:var(--pp);flex:1;padding:4px 8px;border-radius:6px;transition:all .15s" onmouseover="this.style.background='var(--pp-light)'" onmouseout="this.style.background=''" onclick="editSchedulePersonNameInline('p')">ปังปอนด์</span>
+                  <span id="sched-name-p" style="font-size:15px;font-weight:600;cursor:pointer;color:var(--pp);flex:1;padding:4px 8px;border-radius:6px;transition:all .15s" onmouseover="this.style.background='var(--pp-light)'" onmouseout="this.style.background=''" onclick="editSchedulePersonName('p')" title="แก้ไขชื่อ">ปังปอนด์ ✏️</span>
                 </div>
                 <div class="schedule-list" id="schedule-list-p"></div>
-                <button class="schedule-add-btn" onclick="addScheduleItemForPerson('p')" title="เพิ่มรายการใหม่" style="width:100%;justify-content:center">
+                <div id="schedule-input-row-p"></div>
+                <button class="schedule-add-btn" onclick="addScheduleItemForPerson('p')" title="เพิ่มรายการใหม่" style="width:100%;justify-content:center;margin-top:8px">
                   <span>+</span> เพิ่มรายการ
                 </button>
               </div>
-              
-              <!-- นานา -->
+
+              <!-- น -->
               <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
                   <div class="ps-avatar av-n">น</div>
-                  <span id="sched-name-n-edit" style="font-size:15px;font-weight:600;cursor:pointer;color:var(--nn);flex:1;padding:4px 8px;border-radius:6px;transition:all .15s" onmouseover="this.style.background='var(--nn-light)'" onmouseout="this.style.background=''" onclick="editSchedulePersonNameInline('n')">ช่องว่าง</span>
+                  <span id="sched-name-n" style="font-size:15px;font-weight:600;cursor:pointer;color:var(--nn);flex:1;padding:4px 8px;border-radius:6px;transition:all .15s" onmouseover="this.style.background='var(--nn-light)'" onmouseout="this.style.background=''" onclick="editSchedulePersonName('n')" title="แก้ไขชื่อ">ช่องว่าง ✏️</span>
                 </div>
                 <div class="schedule-list" id="schedule-list-n"></div>
-                <button class="schedule-add-btn" onclick="addScheduleItemForPerson('n')" title="เพิ่มรายการใหม่" style="width:100%;justify-content:center">
+                <div id="schedule-input-row-n"></div>
+                <button class="schedule-add-btn" onclick="addScheduleItemForPerson('n')" title="เพิ่มรายการใหม่" style="width:100%;justify-content:center;margin-top:8px">
                   <span>+</span> เพิ่มรายการ
                 </button>
               </div>
@@ -498,7 +507,7 @@ const THAI_DAYS_S    = ['อา','จ','อ','พ','พฤ','ศ','ส'];
 const THAI_DAYS_L    = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
 
 const TODAY = new Date();
-let state = { year:TODAY.getFullYear(), month:TODAY.getMonth(), day:TODAY.getDate(), person:'p', view:'single', cache:{}, personNames:{p:'ปังปอนด์', n:'ช่องว่าง'}, showScheduleInput:false };
+let state = { year:TODAY.getFullYear(), month:TODAY.getMonth(), day:TODAY.getDate(), person:'p', view:'single', cache:{}, personNames:{p:'ปังปอนด์', n:'ช่องว่าง'}, scheduleAdding:{p:false,n:false} };
 
 /* ── FIREBASE ─────────────────────────────────────── */
 function dayPath(y,m,d,who){ return `habits/${y}_${String(m+1).padStart(2,'0')}_${String(d).padStart(2,'0')}/${who}`; }
@@ -645,10 +654,13 @@ window.saveDailyNote=saveDailyNote;
 function getDailyNote(y,m,d){ return state.cache[dnKey(y,m,d)]||''; }
 
 // ── SCHEDULE ──────────────────────────────────────
-let scheduleCurrentPerson='p';
 function schedulePath(y,m,d){ return `schedules/${y}_${String(m+1).padStart(2,'0')}_${String(d).padStart(2,'0')}`; }
 function sKey(y,m,d,who){ return `s_${y}_${m}_${d}_${who}`; }
-function schedulePersonNameKey(who){ return `sched_name_${who}`; }
+
+// which person(s) currently have their "add item" row open, keyed by who
+state.scheduleAdding = state.scheduleAdding || {p:false, n:false};
+// in-flight drag info
+let scheduleDrag = null;
 
 let scheduleUnsubs=[];
 function unsubSchedules(){ scheduleUnsubs.forEach(u=>u&&u()); scheduleUnsubs=[]; }
@@ -659,121 +671,213 @@ function subscribeSchedules(y,m,d){
     const r=ref(db,schedulePath(y,m,d)+'/'+who);
     const unsub=onValue(r,snap=>{
       const val=snap.val();
-      state.cache[sKey(y,m,d,who)]={items:val||[], name:(val||{}).name || ''};
-      if(state.view==='schedule' && !state.showScheduleInput) renderSchedule();
-    });
+      state.cache[sKey(y,m,d,who)]={items:Array.isArray(val&&val.items)?val.items:[]};
+      // don't blow away an open "add item" input while the user is typing
+      if(state.view==='schedule' && !state.scheduleAdding.p && !state.scheduleAdding.n) renderSchedule();
+    }, _=>setSyncStatus('offline'));
     scheduleUnsubs.push(unsub);
   });
 }
 
-function subscribeScheduleNames(){
-  ['p','n'].forEach(who=>{
-    const r=ref(db,'schedule_settings/'+who);
-    const unsub=onValue(r,snap=>{
-      const val=snap.val();
-      if(val && val.name) state.personNames[who+'_sched']=val.name;
-    });
-    scheduleUnsubs.push(unsub);
-  });
+function getScheduleItems(y,m,d,who){
+  const data=state.cache[sKey(y,m,d,who)]||{items:[]};
+  return Array.isArray(data.items)?data.items:[];
 }
 
-function setSchedulePerson(who){
-  scheduleCurrentPerson=who;
+async function saveScheduleItems(y,m,d,who,items){
+  setSyncStatus('syncing');
+  state.cache[sKey(y,m,d,who)]={items:items};
+  try{
+    await set(ref(db,schedulePath(y,m,d)+'/'+who), {items:items.length?items:[]});
+    setSyncStatus('online');
+  } catch(e){ setSyncStatus('offline'); }
   renderSchedule();
 }
-window.setSchedulePerson=setSchedulePerson;
 
-function saveSchedulePersonName(){
-  const input=document.getElementById('schedule-person-name');
-  if(!input) return;
-  const name=input.value.trim();
-  if(name){
-    setSyncStatus('syncing');
-    set(ref(db,'schedule_settings/'+scheduleCurrentPerson), {name:name})
-      .then(()=>{ setSyncStatus('online'); renderSchedule(); })
-      .catch(()=>{ setSyncStatus('offline'); });
-  }
+function editSchedulePersonName(who){
+  editPersonName(who);
 }
-window.saveSchedulePersonName=saveSchedulePersonName;
+window.editSchedulePersonName=editSchedulePersonName;
 
-async function addScheduleItem(){
-  console.log('addScheduleItem called');
-  state.view='schedule';
-  state.showScheduleInput=true;
+function addScheduleItemForPerson(who){
+  state.scheduleAdding[who]=true;
   renderSchedule();
   setTimeout(()=>{
-    const ti=document.getElementById('new-schedule-time');
+    const ti=document.getElementById(`new-schedule-time-${who}`);
     if(ti) ti.focus();
-  },50);
+  },30);
 }
-window.addScheduleItem=addScheduleItem;
+window.addScheduleItemForPerson=addScheduleItemForPerson;
 
-async function saveScheduleItem(y,m,d,who,id,time,text){
-  setSyncStatus('syncing');
-  const key=sKey(y,m,d,who);
-  const data=state.cache[key]||{items:[], name:''};
-  const items=Array.isArray(data.items)?data.items:[];
-  const item=items.find(s=>s.id===id);
-  if(item){
-    item.time=time;
-    item.text=text;
-  }
-  try{
-    await set(ref(db,schedulePath(y,m,d)+'/'+who), {items:items.length?items:[], name:data.name||''});
-    setSyncStatus('online');
-  } catch(e){ setSyncStatus('offline'); }
+function finishAddSchedule(y,m,d,who){
+  const timeEl=document.getElementById(`new-schedule-time-${who}`);
+  const textEl=document.getElementById(`new-schedule-text-${who}`);
+  const time=(timeEl&&timeEl.value||'').trim();
+  const text=(textEl&&textEl.value||'').trim();
+  if(!text){ return; }
+  const items=getScheduleItems(y,m,d,who).slice();
+  const newItem={id:Date.now(),time:time,text:text,done:false};
+  items.push(newItem);
+  state.scheduleAdding[who]=false;
+  saveScheduleItems(y,m,d,who,items);
 }
-window.saveScheduleItem=saveScheduleItem;
+window.finishAddSchedule=finishAddSchedule;
 
-async function deleteScheduleItem(y,m,d,who,id){
-  setSyncStatus('syncing');
-  const key=sKey(y,m,d,who);
-  const data=state.cache[key]||{items:[]};
-  let items=Array.isArray(data.items)?data.items:[];
-  items=items.filter(s=>s.id!==id);
-  try{
-    await set(ref(db,schedulePath(y,m,d)+'/'+who), {items:items.length?items:[], name:data.name||''});
-    setSyncStatus('online');
-    renderSchedule();
-  } catch(e){ setSyncStatus('offline'); }
+function cancelAddSchedule(who){
+  state.scheduleAdding[who]=false;
+  renderSchedule();
 }
-window.deleteScheduleItem=deleteScheduleItem;
+window.cancelAddSchedule=cancelAddSchedule;
 
-async function toggleScheduleItem(y,m,d,who,id){
-  setSyncStatus('syncing');
-  const key=sKey(y,m,d,who);
-  const data=state.cache[key]||{items:[]};
-  const items=Array.isArray(data.items)?data.items:[];
+function toggleScheduleItem(y,m,d,who,id){
+  const items=getScheduleItems(y,m,d,who).slice();
   const item=items.find(s=>s.id===id);
   if(item) item.done=!item.done;
-  try{
-    await set(ref(db,schedulePath(y,m,d)+'/'+who), {items:items.length?items:[], name:data.name||''});
-    setSyncStatus('online');
-    renderSchedule();
-  } catch(e){ setSyncStatus('offline'); }
+  saveScheduleItems(y,m,d,who,items);
 }
 window.toggleScheduleItem=toggleScheduleItem;
 
-async function moveScheduleItem(y,m,d,who,id,direction){
-  const key=sKey(y,m,d,who);
-  const data=state.cache[key]||{items:[]};
-  let items=Array.isArray(data.items)?data.items:[];
+function deleteScheduleItem(y,m,d,who,id){
+  const items=getScheduleItems(y,m,d,who).filter(s=>s.id!==id);
+  saveScheduleItems(y,m,d,who,items);
+}
+window.deleteScheduleItem=deleteScheduleItem;
+
+function editScheduleItem(y,m,d,who,id){
+  const items=getScheduleItems(y,m,d,who).slice();
+  const item=items.find(s=>s.id===id);
+  if(!item) return;
+  const newTime=prompt('เวลา:',item.time||'');
+  if(newTime===null) return;
+  const newText=prompt('รายการ:',item.text||'');
+  if(newText===null) return;
+  item.time=newTime.trim();
+  item.text=newText.trim();
+  saveScheduleItems(y,m,d,who,items);
+}
+window.editScheduleItem=editScheduleItem;
+
+function moveScheduleItem(y,m,d,who,id,direction){
+  const items=getScheduleItems(y,m,d,who).slice();
   const idx=items.findIndex(s=>s.id===id);
   if(idx===-1) return;
-  
-  if(direction==='up' && idx>0){
-    [items[idx], items[idx-1]]=[items[idx-1], items[idx]];
-  } else if(direction==='down' && idx<items.length-1){
-    [items[idx], items[idx+1]]=[items[idx+1], items[idx]];
-  }
-  
-  try{
-    await set(ref(db,schedulePath(y,m,d)+'/'+who), {items:items.length?items:[], name:data.name||''});
-    setSyncStatus('online');
-    renderSchedule();
-  } catch(e){ setSyncStatus('offline'); }
+  if(direction==='up' && idx>0){ [items[idx],items[idx-1]]=[items[idx-1],items[idx]]; }
+  else if(direction==='down' && idx<items.length-1){ [items[idx],items[idx+1]]=[items[idx+1],items[idx]]; }
+  else return;
+  saveScheduleItems(y,m,d,who,items);
 }
 window.moveScheduleItem=moveScheduleItem;
+
+// ── drag & drop reordering ──────────────────────────
+function scheduleDragStart(e,who,id){
+  scheduleDrag={who,id};
+  e.dataTransfer.effectAllowed='move';
+  try{ e.dataTransfer.setData('text/plain', String(id)); }catch(err){}
+  e.currentTarget.classList.add('dragging');
+}
+window.scheduleDragStart=scheduleDragStart;
+
+function scheduleDragEnd(e){
+  e.currentTarget.classList.remove('dragging');
+  document.querySelectorAll('.schedule-item').forEach(el=>{
+    el.classList.remove('drag-over-top','drag-over-bottom');
+  });
+  scheduleDrag=null;
+}
+window.scheduleDragEnd=scheduleDragEnd;
+
+function scheduleDragOver(e,who,overId){
+  if(!scheduleDrag || scheduleDrag.who!==who) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect='move';
+  const el=e.currentTarget;
+  const rect=el.getBoundingClientRect();
+  const before=(e.clientY-rect.top) < rect.height/2;
+  el.classList.toggle('drag-over-top', before);
+  el.classList.toggle('drag-over-bottom', !before);
+}
+window.scheduleDragOver=scheduleDragOver;
+
+function scheduleDragLeave(e){
+  e.currentTarget.classList.remove('drag-over-top','drag-over-bottom');
+}
+window.scheduleDragLeave=scheduleDragLeave;
+
+function scheduleDrop(e,y,m,d,who,overId){
+  e.preventDefault();
+  const el=e.currentTarget;
+  const before=el.classList.contains('drag-over-top');
+  el.classList.remove('drag-over-top','drag-over-bottom');
+  if(!scheduleDrag || scheduleDrag.who!==who) return;
+  const draggedId=scheduleDrag.id;
+  if(draggedId===overId) return;
+  const items=getScheduleItems(y,m,d,who).slice();
+  const fromIdx=items.findIndex(s=>s.id===draggedId);
+  if(fromIdx===-1) return;
+  const [moved]=items.splice(fromIdx,1);
+  let toIdx=items.findIndex(s=>s.id===overId);
+  if(toIdx===-1) toIdx=items.length;
+  else if(!before) toIdx+=1;
+  items.splice(toIdx,0,moved);
+  saveScheduleItems(y,m,d,who,items);
+}
+window.scheduleDrop=scheduleDrop;
+
+function scheduleListDrop(e,y,m,d,who){
+  // dropping on empty space at the bottom of the list -> move to end
+  e.preventDefault();
+  if(!scheduleDrag || scheduleDrag.who!==who) return;
+  const items=getScheduleItems(y,m,d,who).slice();
+  const fromIdx=items.findIndex(s=>s.id===scheduleDrag.id);
+  if(fromIdx===-1) return;
+  const [moved]=items.splice(fromIdx,1);
+  items.push(moved);
+  saveScheduleItems(y,m,d,who,items);
+}
+window.scheduleListDrop=scheduleListDrop;
+
+function renderScheduleColumn(y,m,d,who){
+  const items=getScheduleItems(y,m,d,who);
+  const nameEl=document.getElementById(`sched-name-${who}`);
+  if(nameEl) nameEl.textContent=(state.personNames[who]||'')+' ✏️';
+
+  let html='';
+  if(!items.length && !state.scheduleAdding[who]){
+    html+=`<div class="schedule-empty">ยังไม่มีรายการ</div>`;
+  }
+  items.forEach(s=>{
+    html+=`<div class="schedule-item${s.done?' done':''}" draggable="true"
+      ondragstart="scheduleDragStart(event,'${who}',${s.id})"
+      ondragend="scheduleDragEnd(event)"
+      ondragover="scheduleDragOver(event,'${who}',${s.id})"
+      ondragleave="scheduleDragLeave(event)"
+      ondrop="scheduleDrop(event,${y},${m},${d},'${who}',${s.id})">
+      <span class="schedule-drag-handle" title="ลากเพื่อจัดลำดับ">⋮⋮</span>
+      <div class="schedule-checkbox${s.done?' checked':''}" onclick="event.stopPropagation();toggleScheduleItem(${y},${m},${d},'${who}',${s.id})" style="pointer-events:auto;cursor:pointer">${s.done?'✓':''}</div>
+      <span class="schedule-time">${s.time||''}</span>
+      <span class="schedule-text">${s.text}</span>
+      <div class="schedule-actions">
+        <button class="schedule-btn" onclick="event.stopPropagation();editScheduleItem(${y},${m},${d},'${who}',${s.id})" title="แก้ไข">✏️</button>
+        <button class="schedule-btn" onclick="event.stopPropagation();deleteScheduleItem(${y},${m},${d},'${who}',${s.id})" title="ลบ">🗑️</button>
+      </div>
+    </div>`;
+  });
+  document.getElementById(`schedule-list-${who}`).innerHTML=html;
+  document.getElementById(`schedule-list-${who}`).ondragover=e=>e.preventDefault();
+  document.getElementById(`schedule-list-${who}`).ondrop=e=>scheduleListDrop(e,y,m,d,who);
+
+  const inputHost=document.getElementById(`schedule-input-row-${who}`);
+  if(state.scheduleAdding[who]){
+    inputHost.innerHTML=`<div class="schedule-input-row">
+      <input type="text" id="new-schedule-time-${who}" class="schedule-time-input" placeholder="เวลา" maxlength="5">
+      <input type="text" id="new-schedule-text-${who}" class="schedule-text-input" placeholder="รายการ" onkeydown="if(event.key==='Enter'){finishAddSchedule(${y},${m},${d},'${who}');}">
+      <button class="schedule-save-btn" onclick="finishAddSchedule(${y},${m},${d},'${who}')">บันทึก</button>
+      <button class="schedule-cancel-btn" onclick="cancelAddSchedule('${who}')">ยกเลิก</button>
+    </div>`;
+  } else {
+    inputHost.innerHTML='';
+  }
+}
 
 function renderSchedule(){
   const {year,month,day}=state;
@@ -788,86 +892,9 @@ function renderSchedule(){
   document.getElementById('daily-note-box').style.display='none';
   document.getElementById('date-header').style.display='none';
 
-  // Update tab buttons
-  document.getElementById('schedule-tab-p').className='schedule-tab-btn'+(scheduleCurrentPerson==='p'?' active':'');
-  document.getElementById('schedule-tab-n').className='schedule-tab-btn'+(scheduleCurrentPerson==='n'?' active':'');
-  
-  const key=sKey(year,month,day,scheduleCurrentPerson);
-  const data=state.cache[key]||{items:[], name:''};
-  const schedules=Array.isArray(data.items)?data.items:[];
-  
-  // Update name input
-  const nameInput=document.getElementById('schedule-person-name');
-  if(nameInput) nameInput.value=data.name||'';
-  
-  let html='';
-  if(state.showScheduleInput){
-    html+=`<div class="schedule-input-row" id="schedule-input-row">
-      <input type="text" id="new-schedule-time" class="schedule-time-input" placeholder="เวลา" maxlength="5" style="width:60px">
-      <input type="text" id="new-schedule-text" class="schedule-text-input" placeholder="รายการ" autofocus>
-      <button class="schedule-save-btn" onclick="finishAddSchedule(${year},${month},${day},'${scheduleCurrentPerson}')">บันทึก</button>
-      <button class="schedule-cancel-btn" onclick="cancelAddSchedule()">ยกเลิก</button>
-    </div>`;
-  }
-  
-  schedules.forEach((s,i)=>{
-    const checked=s.done?' checked':'';
-    html+=`<div class="schedule-item${s.done?' done':''}" onclick="toggleScheduleItem(${year},${month},${day},'${scheduleCurrentPerson}',${s.id})">
-      <div class="schedule-checkbox${checked}">
-        ${s.done?'✓':''}
-      </div>
-      <span class="schedule-time">${s.time}</span>
-      <span class="schedule-text">${s.text}</span>
-      <div class="schedule-actions">
-        ${i>0?`<button class="schedule-btn" onclick="event.stopPropagation();moveScheduleItem(${year},${month},${day},'${scheduleCurrentPerson}',${s.id},'up')" title="ขึ้น">↑</button>`:''}
-        ${i<schedules.length-1?`<button class="schedule-btn" onclick="event.stopPropagation();moveScheduleItem(${year},${month},${day},'${scheduleCurrentPerson}',${s.id},'down')" title="ลง">↓</button>`:''}
-        <button class="schedule-btn" onclick="event.stopPropagation();editScheduleItem(${year},${month},${day},'${scheduleCurrentPerson}',${s.id})" title="แก้ไข">✏️</button>
-        <button class="schedule-btn" onclick="event.stopPropagation();deleteScheduleItem(${year},${month},${day},'${scheduleCurrentPerson}',${s.id})" title="ลบ">🗑️</button>
-      </div>
-    </div>`;
-  });
-  
-  document.getElementById('schedule-list').innerHTML=html;
+  renderScheduleColumn(year,month,day,'p');
+  renderScheduleColumn(year,month,day,'n');
 }
-
-function finishAddSchedule(y,m,d,who){
-  const time=document.getElementById('new-schedule-time').value||'';
-  const text=document.getElementById('new-schedule-text').value||'';
-  if(time.trim() && text.trim()){
-    const key=sKey(y,m,d,who);
-    const data=state.cache[key]||{items:[], name:''};
-    const items=Array.isArray(data.items)?data.items:[];
-    const newItem={id:Date.now(),time:time.trim(),text:text.trim(),done:false};
-    items.push(newItem);
-    state.cache[key]={items:items, name:data.name||''};
-    state.showScheduleInput=false;
-    saveScheduleItem(y,m,d,who,newItem.id,time.trim(),text.trim());
-  }
-}
-window.finishAddSchedule=finishAddSchedule;
-
-function cancelAddSchedule(){
-  state.showScheduleInput=false;
-  renderSchedule();
-}
-window.cancelAddSchedule=cancelAddSchedule;
-
-function editScheduleItem(y,m,d,who,id){
-  const key=sKey(y,m,d,who);
-  const data=state.cache[key]||{items:[]};
-  const items=Array.isArray(data.items)?data.items:[];
-  const item=items.find(s=>s.id===id);
-  if(item){
-    const newTime=prompt('เวลา:',item.time);
-    if(newTime!==null){
-      const newText=prompt('รายการ:',item.text);
-      if(newText!==null){
-        saveScheduleItem(y,m,d,who,id,newTime.trim(),newText.trim());
-      }
-    }
-  }
-}
-window.editScheduleItem=editScheduleItem;
 
 // ── PERSON NAMES ──────────────────────────────────────
 let nameUnsubs=[];
@@ -1196,7 +1223,6 @@ function renderAll(){
 /* ── INIT ─────────────────────────────────────────── */
 subscribeMonth(state.year, state.month);
 subscribePersonNames();
-subscribeScheduleNames();
 setSyncStatus('online');
 renderAll();
 
