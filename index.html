@@ -217,19 +217,26 @@
   .schedule-container{padding:20px 0}
   .schedule-header{margin-bottom:24px}
   .schedule-title{font-size:24px;font-weight:600;margin-bottom:16px}
+  .schedule-tab-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;border:2px solid var(--border-mid);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-2);cursor:pointer;font-family:inherit;font-size:14px;font-weight:500;transition:all .15s}
+  .schedule-tab-btn:hover{border-color:var(--border-mid);background:var(--bg)}
+  .schedule-tab-btn.active{border-color:var(--pp);color:var(--pp);background:var(--pp-light)}
+  .schedule-name-input{padding:8px 10px;border:1px solid var(--border-mid);border-radius:var(--radius-sm);background:var(--surface);font-family:inherit;font-size:13px;outline:none;transition:border-color .15s}
+  .schedule-name-input:focus{border-color:var(--pp)}
+  .schedule-edit-name-btn{padding:8px 12px;background:var(--pp);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s}
+  .schedule-edit-name-btn:hover{background:var(--pp-mid)}
   .schedule-add-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;border:2px solid var(--border-mid);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-2);cursor:pointer;font-family:inherit;font-size:14px;font-weight:500;transition:all .15s}
   .schedule-add-btn:hover{border-color:var(--pp);color:var(--pp);background:var(--pp-light)}
   .schedule-list{display:flex;flex-direction:column;gap:4px}
-  .schedule-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);transition:all .12s;cursor:pointer}
+  .schedule-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);transition:all .12s;cursor:pointer;user-select:none}
   .schedule-item:hover{border-color:var(--border-mid);background:var(--bg)}
   .schedule-item.done{background:rgba(124,92,191,.08);border-color:rgba(124,92,191,.2)}
   .schedule-item.done .schedule-time,.schedule-item.done .schedule-text{color:var(--text-3)}
-  .schedule-checkbox{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border-mid);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s}
-  .schedule-checkbox.checked{background:var(--pp);border-color:var(--pp);color:#fff;font-weight:600}
+  .schedule-checkbox{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border-mid);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:600;pointer-events:none}
+  .schedule-checkbox.checked{background:var(--pp);border-color:var(--pp);color:#fff}
   .schedule-time{font-size:13px;font-weight:600;color:var(--text);width:50px;flex-shrink:0}
   .schedule-text{font-size:14px;color:var(--text-2);flex:1}
-  .schedule-actions{display:flex;gap:6px;flex-shrink:0}
-  .schedule-btn{width:28px;height:28px;border:none;background:transparent;border-radius:6px;cursor:pointer;font-size:14px;opacity:.5;transition:all .15s;display:flex;align-items:center;justify-content:center}
+  .schedule-actions{display:flex;gap:6px;flex-shrink:0;pointer-events:auto}
+  .schedule-btn{width:28px;height:28px;border:none;background:transparent;border-radius:6px;cursor:pointer;font-size:13px;opacity:.5;transition:all .15s;display:flex;align-items:center;justify-content:center}
   .schedule-btn:hover{opacity:1;background:rgba(0,0,0,.05)}
   .schedule-input-row{display:flex;gap:8px;padding:8px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:8px}
   .schedule-time-input{width:70px;padding:8px 10px;border:1px solid var(--border-mid);border-radius:6px;background:var(--surface);font-family:inherit;font-size:13px;outline:none}
@@ -386,7 +393,18 @@
       <div id="view-schedule" style="display:none">
         <div class="schedule-container">
           <div class="schedule-header">
-            <div class="schedule-title">Schedule 2026</div>
+            <div style="display:flex;gap:12px;margin-bottom:16px">
+              <button class="schedule-tab-btn active" id="schedule-tab-p" onclick="setSchedulePerson('p')">
+                <div class="ps-avatar av-p">ป</div><span id="sched-name-p">ปังปอนด์</span>
+              </button>
+              <button class="schedule-tab-btn" id="schedule-tab-n" onclick="setSchedulePerson('n')">
+                <div class="ps-avatar av-n">น</div><span id="sched-name-n">ช่องว่าง</span>
+              </button>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px">
+              <input type="text" id="schedule-person-name" class="schedule-name-input" placeholder="ตั้งชื่อ..." style="flex:1">
+              <button class="schedule-edit-name-btn" onclick="saveSchedulePersonName()" title="บันทึกชื่อ">✓</button>
+            </div>
             <button class="schedule-add-btn" onclick="addScheduleItem()" title="เพิ่มรายการใหม่">
               <span>+</span> เพิ่มรายการ
             </button>
@@ -618,31 +636,62 @@ window.saveDailyNote=saveDailyNote;
 function getDailyNote(y,m,d){ return state.cache[dnKey(y,m,d)]||''; }
 
 // ── SCHEDULE ──────────────────────────────────────
+let scheduleCurrentPerson='p';
 function schedulePath(y,m,d){ return `schedules/${y}_${String(m+1).padStart(2,'0')}_${String(d).padStart(2,'0')}`; }
-function sKey(y,m,d){ return `s_${y}_${m}_${d}`; }
+function sKey(y,m,d,who){ return `s_${y}_${m}_${d}_${who}`; }
+function schedulePersonNameKey(who){ return `sched_name_${who}`; }
 
-let scheduleUnsub=null;
-function unsubSchedule(){ scheduleUnsub && scheduleUnsub(); scheduleUnsub=null; }
+let scheduleUnsubs=[];
+function unsubSchedules(){ scheduleUnsubs.forEach(u=>u&&u()); scheduleUnsubs=[]; }
 
-function subscribeSchedule(y,m,d){
-  unsubSchedule();
-  const r=ref(db,schedulePath(y,m,d));
-  scheduleUnsub=onValue(r,snap=>{
-    const val=snap.val();
-    const key=sKey(y,m,d);
-    // ไม่เขียนทับ cache เมื่อ state.showScheduleInput = true (ยังกำลังเพิ่มรายการ)
-    if(!state.showScheduleInput){
-      state.cache[key]=val||[];
-    }
-    if(state.view==='schedule' && !state.showScheduleInput) renderSchedule();
+function subscribeSchedules(y,m,d){
+  unsubSchedules();
+  ['p','n'].forEach(who=>{
+    const r=ref(db,schedulePath(y,m,d)+'/'+who);
+    const unsub=onValue(r,snap=>{
+      const val=snap.val();
+      state.cache[sKey(y,m,d,who)]={items:val||[], name:(val||{}).name || ''};
+      if(state.view==='schedule' && !state.showScheduleInput) renderSchedule();
+    });
+    scheduleUnsubs.push(unsub);
   });
 }
+
+function subscribeScheduleNames(){
+  ['p','n'].forEach(who=>{
+    const r=ref(db,'schedule_settings/'+who);
+    const unsub=onValue(r,snap=>{
+      const val=snap.val();
+      if(val && val.name) state.personNames[who+'_sched']=val.name;
+    });
+    scheduleUnsubs.push(unsub);
+  });
+}
+
+function setSchedulePerson(who){
+  scheduleCurrentPerson=who;
+  renderSchedule();
+}
+window.setSchedulePerson=setSchedulePerson;
+
+function saveSchedulePersonName(){
+  const input=document.getElementById('schedule-person-name');
+  if(!input) return;
+  const name=input.value.trim();
+  if(name){
+    setSyncStatus('syncing');
+    set(ref(db,'schedule_settings/'+scheduleCurrentPerson), {name:name})
+      .then(()=>{ setSyncStatus('online'); renderSchedule(); })
+      .catch(()=>{ setSyncStatus('offline'); });
+  }
+}
+window.saveSchedulePersonName=saveSchedulePersonName;
 
 async function addScheduleItem(){
   console.log('addScheduleItem called');
   state.view='schedule';
   state.showScheduleInput=true;
-  renderAll();
+  renderSchedule();
   setTimeout(()=>{
     const ti=document.getElementById('new-schedule-time');
     if(ti) ti.focus();
@@ -650,52 +699,72 @@ async function addScheduleItem(){
 }
 window.addScheduleItem=addScheduleItem;
 
-async function saveScheduleItem(y,m,d,id,time,text){
+async function saveScheduleItem(y,m,d,who,id,time,text){
   setSyncStatus('syncing');
-  const key=sKey(y,m,d);
-  const schedules=[...(state.cache[key]||[])];
-  const item=schedules.find(s=>s.id===id);
+  const key=sKey(y,m,d,who);
+  const data=state.cache[key]||{items:[], name:''};
+  const items=Array.isArray(data.items)?data.items:[];
+  const item=items.find(s=>s.id===id);
   if(item){
     item.time=time;
     item.text=text;
   }
-  state.cache[key]=schedules;
   try{
-    await set(ref(db,schedulePath(y,m,d)), schedules.length?schedules:null);
+    await set(ref(db,schedulePath(y,m,d)+'/'+who), {items:items.length?items:[], name:data.name||''});
     setSyncStatus('online');
-    renderSchedule();
   } catch(e){ setSyncStatus('offline'); }
 }
 window.saveScheduleItem=saveScheduleItem;
 
-async function deleteScheduleItem(y,m,d,id){
+async function deleteScheduleItem(y,m,d,who,id){
   setSyncStatus('syncing');
-  const key=sKey(y,m,d);
-  let schedules=[...(state.cache[key]||[])];
-  schedules=schedules.filter(s=>s.id!==id);
-  state.cache[key]=schedules;
+  const key=sKey(y,m,d,who);
+  const data=state.cache[key]||{items:[]};
+  let items=Array.isArray(data.items)?data.items:[];
+  items=items.filter(s=>s.id!==id);
   try{
-    await set(ref(db,schedulePath(y,m,d)), schedules.length?schedules:null);
+    await set(ref(db,schedulePath(y,m,d)+'/'+who), {items:items.length?items:[], name:data.name||''});
     setSyncStatus('online');
     renderSchedule();
   } catch(e){ setSyncStatus('offline'); }
 }
 window.deleteScheduleItem=deleteScheduleItem;
 
-async function toggleScheduleItem(y,m,d,id){
+async function toggleScheduleItem(y,m,d,who,id){
   setSyncStatus('syncing');
-  const key=sKey(y,m,d);
-  const schedules=[...(state.cache[key]||[])];
-  const item=schedules.find(s=>s.id===id);
+  const key=sKey(y,m,d,who);
+  const data=state.cache[key]||{items:[]};
+  const items=Array.isArray(data.items)?data.items:[];
+  const item=items.find(s=>s.id===id);
   if(item) item.done=!item.done;
-  state.cache[key]=schedules;
   try{
-    await set(ref(db,schedulePath(y,m,d)), schedules.length?schedules:null);
+    await set(ref(db,schedulePath(y,m,d)+'/'+who), {items:items.length?items:[], name:data.name||''});
     setSyncStatus('online');
     renderSchedule();
   } catch(e){ setSyncStatus('offline'); }
 }
 window.toggleScheduleItem=toggleScheduleItem;
+
+async function moveScheduleItem(y,m,d,who,id,direction){
+  const key=sKey(y,m,d,who);
+  const data=state.cache[key]||{items:[]};
+  let items=Array.isArray(data.items)?data.items:[];
+  const idx=items.findIndex(s=>s.id===id);
+  if(idx===-1) return;
+  
+  if(direction==='up' && idx>0){
+    [items[idx], items[idx-1]]=[items[idx-1], items[idx]];
+  } else if(direction==='down' && idx<items.length-1){
+    [items[idx], items[idx+1]]=[items[idx+1], items[idx]];
+  }
+  
+  try{
+    await set(ref(db,schedulePath(y,m,d)+'/'+who), {items:items.length?items:[], name:data.name||''});
+    setSyncStatus('online');
+    renderSchedule();
+  } catch(e){ setSyncStatus('offline'); }
+}
+window.moveScheduleItem=moveScheduleItem;
 
 function renderSchedule(){
   const {year,month,day}=state;
@@ -709,31 +778,42 @@ function renderSchedule(){
   document.getElementById('view-schedule').style.display='';
   document.getElementById('daily-note-box').style.display='none';
   document.getElementById('date-header').style.display='none';
+
+  // Update tab buttons
+  document.getElementById('schedule-tab-p').className='schedule-tab-btn'+(scheduleCurrentPerson==='p'?' active':'');
+  document.getElementById('schedule-tab-n').className='schedule-tab-btn'+(scheduleCurrentPerson==='n'?' active':'');
   
-  const key=sKey(year,month,day);
-  const schedules=state.cache[key]||[];
+  const key=sKey(year,month,day,scheduleCurrentPerson);
+  const data=state.cache[key]||{items:[], name:''};
+  const schedules=Array.isArray(data.items)?data.items:[];
+  
+  // Update name input
+  const nameInput=document.getElementById('schedule-person-name');
+  if(nameInput) nameInput.value=data.name||'';
   
   let html='';
   if(state.showScheduleInput){
     html+=`<div class="schedule-input-row" id="schedule-input-row">
       <input type="text" id="new-schedule-time" class="schedule-time-input" placeholder="เวลา" maxlength="5" style="width:60px">
       <input type="text" id="new-schedule-text" class="schedule-text-input" placeholder="รายการ" autofocus>
-      <button class="schedule-save-btn" onclick="finishAddSchedule(${year},${month},${day})">บันทึก</button>
+      <button class="schedule-save-btn" onclick="finishAddSchedule(${year},${month},${day},'${scheduleCurrentPerson}')">บันทึก</button>
       <button class="schedule-cancel-btn" onclick="cancelAddSchedule()">ยกเลิก</button>
     </div>`;
   }
   
-  schedules.forEach(s=>{
+  schedules.forEach((s,i)=>{
     const checked=s.done?' checked':'';
-    html+=`<div class="schedule-item${s.done?' done':''}">
-      <div class="schedule-checkbox${checked}" onclick="toggleScheduleItem(${year},${month},${day},${s.id})">
+    html+=`<div class="schedule-item${s.done?' done':''}" onclick="toggleScheduleItem(${year},${month},${day},'${scheduleCurrentPerson}',${s.id})">
+      <div class="schedule-checkbox${checked}">
         ${s.done?'✓':''}
       </div>
       <span class="schedule-time">${s.time}</span>
       <span class="schedule-text">${s.text}</span>
       <div class="schedule-actions">
-        <button class="schedule-btn" onclick="editScheduleItem(${year},${month},${day},${s.id})" title="แก้ไข">✏️</button>
-        <button class="schedule-btn" onclick="deleteScheduleItem(${year},${month},${day},${s.id})" title="ลบ">🗑️</button>
+        ${i>0?`<button class="schedule-btn" onclick="event.stopPropagation();moveScheduleItem(${year},${month},${day},'${scheduleCurrentPerson}',${s.id},'up')" title="ขึ้น">↑</button>`:''}
+        ${i<schedules.length-1?`<button class="schedule-btn" onclick="event.stopPropagation();moveScheduleItem(${year},${month},${day},'${scheduleCurrentPerson}',${s.id},'down')" title="ลง">↓</button>`:''}
+        <button class="schedule-btn" onclick="event.stopPropagation();editScheduleItem(${year},${month},${day},'${scheduleCurrentPerson}',${s.id})" title="แก้ไข">✏️</button>
+        <button class="schedule-btn" onclick="event.stopPropagation();deleteScheduleItem(${year},${month},${day},'${scheduleCurrentPerson}',${s.id})" title="ลบ">🗑️</button>
       </div>
     </div>`;
   });
@@ -741,41 +821,39 @@ function renderSchedule(){
   document.getElementById('schedule-list').innerHTML=html;
 }
 
-function finishAddSchedule(y,m,d){
+function finishAddSchedule(y,m,d,who){
   const time=document.getElementById('new-schedule-time').value||'';
   const text=document.getElementById('new-schedule-text').value||'';
   if(time.trim() && text.trim()){
-    const key=sKey(y,m,d);
-    const schedules=[...(state.cache[key]||[])];
+    const key=sKey(y,m,d,who);
+    const data=state.cache[key]||{items:[], name:''};
+    const items=Array.isArray(data.items)?data.items:[];
     const newItem={id:Date.now(),time:time.trim(),text:text.trim(),done:false};
-    schedules.push(newItem);
-    state.cache[key]=schedules;
+    items.push(newItem);
+    state.cache[key]={items:items, name:data.name||''};
     state.showScheduleInput=false;
-    saveScheduleItem(y,m,d,newItem.id,time.trim(),text.trim());
+    saveScheduleItem(y,m,d,who,newItem.id,time.trim(),text.trim());
   }
 }
 window.finishAddSchedule=finishAddSchedule;
 
 function cancelAddSchedule(){
-  const key=sKey(state.year,state.month,state.day);
-  let schedules=[...(state.cache[key]||[])];
-  schedules=schedules.filter(s=>s.time.trim());
-  state.cache[key]=schedules;
   state.showScheduleInput=false;
   renderSchedule();
 }
 window.cancelAddSchedule=cancelAddSchedule;
 
-function editScheduleItem(y,m,d,id){
-  const key=sKey(y,m,d);
-  const schedules=state.cache[key]||[];
-  const item=schedules.find(s=>s.id===id);
+function editScheduleItem(y,m,d,who,id){
+  const key=sKey(y,m,d,who);
+  const data=state.cache[key]||{items:[]};
+  const items=Array.isArray(data.items)?data.items:[];
+  const item=items.find(s=>s.id===id);
   if(item){
     const newTime=prompt('เวลา:',item.time);
     if(newTime!==null){
       const newText=prompt('รายการ:',item.text);
       if(newText!==null){
-        saveScheduleItem(y,m,d,id,newTime.trim(),newText.trim());
+        saveScheduleItem(y,m,d,who,id,newTime.trim(),newText.trim());
       }
     }
   }
@@ -840,7 +918,7 @@ window.selectDay=function(d){
     subscribeNotes(state.year,state.month,d,state.person);
     subscribeDailyNote(state.year,state.month,d);
   } else if(state.view==='schedule'){
-    subscribeSchedule(state.year,state.month,d);
+    subscribeSchedules(state.year,state.month,d);
   }
 };
 
@@ -874,7 +952,7 @@ function renderCal(){
 }
 
 function renderSingle(){
-  unsubSchedule();
+  unsubSchedules();
   const {year,month,day,person}=state;
   document.getElementById('tab-single').className='nav-tab active';
   document.getElementById('tab-compare').className='nav-tab';
@@ -942,7 +1020,7 @@ function renderSingle(){
 function renderCompare(){
   unsubNotes();
   unsubDailyNote();
-  unsubSchedule();
+  unsubSchedules();
   const {year,month,day}=state;
   document.getElementById('tab-single').className='nav-tab';
   document.getElementById('tab-compare').className='nav-tab active';
@@ -976,7 +1054,7 @@ function renderCompare(){
 function renderSummary(){
   unsubNotes();
   unsubDailyNote();
-  unsubSchedule();
+  unsubSchedules();
   const {year,month}=state;
   document.getElementById('tab-single').className='nav-tab';
   document.getElementById('tab-compare').className='nav-tab';
@@ -1109,6 +1187,7 @@ function renderAll(){
 /* ── INIT ─────────────────────────────────────────── */
 subscribeMonth(state.year, state.month);
 subscribePersonNames();
+subscribeScheduleNames();
 setSyncStatus('online');
 renderAll();
 
@@ -1121,7 +1200,7 @@ document.getElementById('daily-note-textarea').addEventListener('input', functio
 subscribeDailyNote(state.year, state.month, state.day);
 
 // Initial schedule load
-subscribeSchedule(state.year, state.month, state.day);
+subscribeSchedules(state.year, state.month, state.day);
 
 document.getElementById('loading-overlay').style.opacity='0';
 setTimeout(()=>{ document.getElementById('loading-overlay').style.display='none'; },350);
